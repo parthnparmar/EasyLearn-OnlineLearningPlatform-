@@ -1,0 +1,102 @@
+@model List<EasyLearn.Models.PuzzleGame>
+@{
+    ViewData["Title"] = "Word Games";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-0">📝 Word Games</h2>
+                    <p class="text-muted mb-0">Challenge your vocabulary and word skills</p>
+                </div>
+                <div>
+                    <a href="@Url.Action("Index", "BrainGames")" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Games
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        @foreach (var game in Model)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card game-card h-100">
+                    <div class="card-header bg-warning text-dark">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 text-dark">@game.Title</h6>
+                            <span class="badge bg-dark text-white">
+                                @game.Difficulty
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small">@game.Description</p>
+                        
+                        <div class="game-stats mb-3">
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <small class="text-muted">Max Score</small>
+                                    <div class="fw-bold text-warning">@game.MaxScore</div>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Time Limit</small>
+                                    <div class="fw-bold text-warning">
+                                        @if (game.TimeLimit > 0)
+                                        {
+                                            @TimeSpan.FromSeconds(game.TimeLimit).ToString(@"mm\:ss")
+                                        }
+                                        else
+                                        {
+                                            <span>No Limit</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <a href="@Url.Action("Play", "BrainGames", new { gameId = game.Id })" class="btn btn-warning">
+                                <i class="fas fa-play"></i> Play Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-font fa-3x text-muted mb-3"></i>
+                        <h5>No Word Games Available</h5>
+                        <p class="text-muted">Word puzzles are being prepared for you!</p>
+                        <a href="@Url.Action("Index", "BrainGames")" class="btn btn-warning">
+                            <i class="fas fa-arrow-left"></i> Back to Games
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <style>
+        .game-card {
+            transition: all 0.3s ease;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+        }
+    </style>
+}

@@ -1,0 +1,435 @@
+@model EasyLearn.Models.ViewModels.PuzzleDashboardViewModel
+@{
+    ViewData["Title"] = "Puzzle & Brain Games";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-0">🧩 Puzzle & Brain Games</h2>
+                    <p class="text-muted mb-0">Challenge your mind with our collection of brain games</p>
+                </div>
+                <div>
+                    <a href="@Url.Action("Stats")" class="btn btn-outline-primary">
+                        <i class="fas fa-chart-bar"></i> My Stats
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Stats Overview -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-gradient-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0 text-white">@Model.UserStats.TotalGamesPlayed</h3>
+                            <p class="mb-0 text-white">Games Played</p>
+                        </div>
+                        <div class="opacity-75">
+                            <i class="fas fa-gamepad fa-2x text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-gradient-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0 text-white">@Model.UserStats.TotalGamesCompleted</h3>
+                            <p class="mb-0 text-white">Completed</p>
+                        </div>
+                        <div class="opacity-75">
+                            <i class="fas fa-trophy fa-2x text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-gradient-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0 text-white">@Model.UserStats.AverageScore</h3>
+                            <p class="mb-0 text-white">Average Score</p>
+                        </div>
+                        <div class="opacity-75">
+                            <i class="fas fa-star fa-2x text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-gradient-warning text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0 text-white">@TimeSpan.FromSeconds(Model.UserStats.TotalTimePlayed).ToString(@"hh\:mm")</h3>
+                            <p class="mb-0 text-white">Time Played</p>
+                        </div>
+                        <div class="opacity-75">
+                            <i class="fas fa-clock fa-2x text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Available Games -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-puzzle-piece"></i> Available Games</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var gameType in Model.AvailableGames.GroupBy(g => g.Type))
+                        {
+                            <div class="col-md-4 mb-4">
+                                <div class="card game-type-card h-100">
+                                    <div class="card-body text-center">
+                                        <div class="game-icon mb-3">
+                                            @switch (gameType.Key)
+                                            {
+                                                case EasyLearn.Models.PuzzleType.Sudoku:
+                                                    <i class="fas fa-th fa-3x text-primary"></i>
+                                                    break;
+                                                case EasyLearn.Models.PuzzleType.WordPuzzle:
+                                                    <i class="fas fa-font fa-3x text-success"></i>
+                                                    break;
+                                                case EasyLearn.Models.PuzzleType.LogicPuzzle:
+                                                    <i class="fas fa-brain fa-3x text-info"></i>
+                                                    break;
+                                                default:
+                                                    <i class="fas fa-puzzle-piece fa-3x text-secondary"></i>
+                                                    break;
+                                            }
+                                        </div>
+                                        <h5 class="card-title">@gameType.Key</h5>
+                                        <p class="text-muted small">@gameType.Count() puzzles available</p>
+                                        <div class="difficulty-badges mb-3">
+                                            @foreach (var difficulty in gameType.GroupBy(g => g.Difficulty))
+                                            {
+                                                <span class="badge badge-difficulty-@difficulty.Key.ToString().ToLower() me-1">
+                                                    @difficulty.Key (@difficulty.Count())
+                                                </span>
+                                            }
+                                        </div>
+                                        <a href="@Url.Action(gameType.Key.ToString().ToLower())" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-play"></i> Play Now
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Games -->
+            @if (Model.RecentAttempts.Any())
+            {
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-history"></i> Recent Games</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Game</th>
+                                        <th>Type</th>
+                                        <th>Difficulty</th>
+                                        <th>Status</th>
+                                        <th>Score</th>
+                                        <th>Time</th>
+                                        <th>Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var attempt in Model.RecentAttempts)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@attempt.PuzzleGame.Title</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">@attempt.PuzzleGame.Type</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-difficulty-@attempt.PuzzleGame.Difficulty.ToString().ToLower()">
+                                                    @attempt.PuzzleGame.Difficulty
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @switch (attempt.Status)
+                                                {
+                                                    case EasyLearn.Models.GameStatus.Completed:
+                                                        <span class="badge bg-success">Completed</span>
+                                                        break;
+                                                    case EasyLearn.Models.GameStatus.InProgress:
+                                                        <span class="badge bg-warning">In Progress</span>
+                                                        break;
+                                                    case EasyLearn.Models.GameStatus.AutoSolved:
+                                                        <span class="badge bg-info">Auto-Solved</span>
+                                                        break;
+                                                    case EasyLearn.Models.GameStatus.Abandoned:
+                                                        <span class="badge bg-danger">Abandoned</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                <strong>@attempt.Score</strong>
+                                            </td>
+                                            <td>
+                                                @TimeSpan.FromSeconds(attempt.TimeTakenSeconds).ToString(@"mm\:ss")
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">@attempt.StartedAt.ToString("MMM dd, HH:mm")</small>
+                                            </td>
+                                            <td>
+                                                @if (attempt.Status == EasyLearn.Models.GameStatus.InProgress)
+                                                {
+                                                    <a href="@Url.Action("Play", new { attemptId = attempt.Id })" class="btn btn-sm btn-primary">
+                                                        <i class="fas fa-play"></i> Continue
+                                                    </a>
+                                                }
+                                                else if (attempt.Status == EasyLearn.Models.GameStatus.Completed)
+                                                {
+                                                    <a href="@Url.Action("Result", new { attemptId = attempt.Id })" class="btn btn-sm btn-outline-info">
+                                                        <i class="fas fa-eye"></i> View
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("GameDetails", new { gameId = attempt.PuzzleGameId })" class="btn btn-sm btn-outline-secondary">
+                                                        <i class="fas fa-redo"></i> Retry
+                                                    </a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Quick Play -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-bolt"></i> Quick Play</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="@Url.Action("sudoku")" class="btn btn-outline-primary">
+                            <i class="fas fa-th"></i> Sudoku
+                        </a>
+                        <a href="@Url.Action("wordpuzzle")" class="btn btn-outline-success">
+                            <i class="fas fa-font"></i> Word Puzzle
+                        </a>
+                        <a href="@Url.Action("logic")" class="btn btn-outline-info">
+                            <i class="fas fa-brain"></i> Logic Games
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Players -->
+            @if (Model.TopPlayers.Any())
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-crown"></i> Top Players</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        @for (int i = 0; i < Model.TopPlayers.Count; i++)
+                        {
+                            var player = Model.TopPlayers[i];
+                            <div class="border-bottom p-3 @(player.IsCurrentUser ? "bg-light" : "")">
+                                <div class="d-flex align-items-center">
+                                    <div class="rank-badge me-3">
+                                        @if (i == 0)
+                                        {
+                                            <i class="fas fa-crown text-warning fa-lg"></i>
+                                        }
+                                        else if (i == 1)
+                                        {
+                                            <i class="fas fa-medal text-secondary fa-lg"></i>
+                                        }
+                                        else if (i == 2)
+                                        {
+                                            <i class="fas fa-medal text-warning fa-lg"></i>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-primary">@(i + 1)</span>
+                                        }
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1 @(player.IsCurrentUser ? "text-primary" : "")">
+                                            @player.UserName
+                                            @if (player.IsCurrentUser)
+                                            {
+                                                <small class="text-muted">(You)</small>
+                                            }
+                                        </h6>
+                                        <div class="d-flex justify-content-between">
+                                            <small class="text-muted">Score: @player.Score</small>
+                                            <small class="text-muted">Games: @player.Attempts</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Tips & Tricks -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-lightbulb"></i> Tips & Tricks</h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle"></i> Pro Tip!</h6>
+                        <p class="mb-0 small">
+                            Use hints wisely - they reduce your final score but can help you learn new strategies!
+                        </p>
+                    </div>
+                    
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <small>Start with easier puzzles to build confidence</small>
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <small>Take breaks to avoid mental fatigue</small>
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <small>Practice regularly to improve your skills</small>
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <small>Challenge yourself with harder difficulties</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Add hover effects to game cards
+            $('.game-type-card').hover(
+                function() { $(this).addClass('shadow-lg'); },
+                function() { $(this).removeClass('shadow-lg'); }
+            );
+
+            // Animate stats cards on load
+            $('.card').addClass('fade-in');
+        });
+    </script>
+
+    <style>
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: #ffffff !important;
+        }
+        
+        .bg-gradient-success {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            color: #ffffff !important;
+        }
+        
+        .bg-gradient-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: #ffffff !important;
+        }
+        
+        .bg-gradient-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: #ffffff !important;
+        }
+        
+        .bg-gradient-primary *,
+        .bg-gradient-success *,
+        .bg-gradient-info *,
+        .bg-gradient-warning * {
+            color: #ffffff !important;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .game-type-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .game-type-card:hover {
+            transform: translateY(-5px);
+            border-color: #007bff;
+        }
+        
+        .game-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .game-type-card:hover .game-icon {
+            transform: scale(1.1);
+        }
+        
+        .badge-difficulty-easy {
+            background-color: #28a745;
+        }
+        
+        .badge-difficulty-medium {
+            background-color: #ffc107;
+            color: #000;
+        }
+        
+        .badge-difficulty-hard {
+            background-color: #fd7e14;
+        }
+        
+        .badge-difficulty-expert {
+            background-color: #dc3545;
+        }
+        
+        .rank-badge {
+            width: 40px;
+            text-align: center;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+}

@@ -1,0 +1,196 @@
+@model List<EasyLearn.Models.ExamAttempt>
+@{
+    ViewData["Title"] = "Internal Assessments";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h5 class="mb-0">Internal Assessments</h5>
+                            <p class="text-sm mb-0">Assign internal marks to completed exams</p>
+                        </div>
+                        <div class="ms-auto">
+                            <span class="badge bg-gradient-warning">@Model.Count Pending</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Important:</strong> Internal marks must be assigned within 3 hours of exam completion. 
+                            Results will be published 3 hours after internal marks are assigned.
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-flush">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Course</th>
+                                        <th>Exam Date</th>
+                                        <th>Part A</th>
+                                        <th>Part B</th>
+                                        <th>Internal (Max: @(Model.FirstOrDefault()?.Exam.InternalMarks ?? 20))</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var attempt in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="ms-3">
+                                                        <h6 class="mb-0 text-sm">@attempt.Student.FirstName @attempt.Student.LastName</h6>
+                                                        <p class="text-xs text-secondary mb-0">@attempt.Student.Email</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <h6 class="mb-0 text-sm">@attempt.Exam.Course.Title</h6>
+                                                <p class="text-xs text-secondary mb-0">@attempt.Exam.Title</p>
+                                            </td>
+                                            <td>
+                                                <span class="text-sm">@attempt.CompletedAt?.ToString("MMM dd, yyyy")</span><br>
+                                                <span class="text-xs text-secondary">@attempt.CompletedAt?.ToString("hh:mm tt")</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-sm font-weight-bold text-success">@attempt.PartAScore/50</span>
+                                            </td>
+                                            <td>
+                                                @if (attempt.ResultPublished)
+                                                {
+                                                    <span class="text-sm font-weight-bold text-success">@attempt.PartBScore/@attempt.Exam.PartBMarks</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-sm text-muted">Pending Grading</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (attempt.ResultPublished)
+                                                {
+                                                    <span class="text-sm font-weight-bold text-info">@attempt.InternalScore/@attempt.Exam.InternalMarks</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-sm text-muted">Pending</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    @if (!attempt.ResultPublished && attempt.PartBCompleted)
+                                                    {
+                                                        <a href="/instructor/grade-part-b/@attempt.Id" class="btn btn-warning btn-sm me-2">
+                                                            <i class="fas fa-edit me-1"></i>Grade Part B
+                                                        </a>
+                                                    }
+                                                    <button class="btn btn-link text-info px-3 mb-0" 
+                                                            onclick="viewExamDetails(@attempt.Id)">
+                                                        <i class="fas fa-eye me-2"></i>View Details
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-clipboard-check fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Pending Internal Assessments</h5>
+                            <p class="text-sm text-muted">All completed exams have been assessed</p>
+                            <a href="/instructor/exam-dashboard" class="btn btn-primary">
+                                <i class="fas fa-chart-bar me-2"></i>View Exam Dashboard
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    @if (Model.Any())
+    {
+        <div class="row mt-4">
+            <div class="col-lg-3 col-md-6 col-12">
+                <div class="card">
+                    <div class="card-header mx-4 p-3 text-center">
+                        <div class="icon icon-shape icon-lg bg-gradient-warning shadow text-center border-radius-lg">
+                            <i class="fas fa-clock opacity-10"></i>
+                        </div>
+                    </div>
+                    <div class="card-body pt-0 p-3 text-center">
+                        <h6 class="text-center mb-0">Pending Assessments</h6>
+                        <span class="text-xs">@Model.Count</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-12">
+                <div class="card">
+                    <div class="card-header mx-4 p-3 text-center">
+                        <div class="icon icon-shape icon-lg bg-gradient-success shadow text-center border-radius-lg">
+                            <i class="fas fa-chart-line opacity-10"></i>
+                        </div>
+                    </div>
+                    <div class="card-body pt-0 p-3 text-center">
+                        <h6 class="text-center mb-0">Avg Part A Score</h6>
+                        <span class="text-xs">@(Model.Any() ? Model.Average(a => a.PartAScore).ToString("F1") : "0")/50</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-12">
+                <div class="card">
+                    <div class="card-header mx-4 p-3 text-center">
+                        <div class="icon icon-shape icon-lg bg-gradient-info shadow text-center border-radius-lg">
+                            <i class="fas fa-edit opacity-10"></i>
+                        </div>
+                    </div>
+                    <div class="card-body pt-0 p-3 text-center">
+                        <h6 class="text-center mb-0">Avg Part B Score</h6>
+                        <span class="text-xs">@(Model.Any() ? Model.Average(a => a.PartBScore).ToString("F1") : "0")/30</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-12">
+                <div class="card">
+                    <div class="card-header mx-4 p-3 text-center">
+                        <div class="icon icon-shape icon-lg bg-gradient-primary shadow text-center border-radius-lg">
+                            <i class="fas fa-users opacity-10"></i>
+                        </div>
+                    </div>
+                    <div class="card-body pt-0 p-3 text-center">
+                        <h6 class="text-center mb-0">Total Students</h6>
+                        <span class="text-xs">@Model.Select(a => a.StudentId).Distinct().Count()</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function viewExamDetails(attemptId) {
+            // You can implement a modal or redirect to detailed view
+            window.open('/instructor/exam-attempt-details/' + attemptId, '_blank');
+        }
+
+        $(document).ready(function() {
+            // Auto-refresh every 5 minutes to check for new submissions
+            setInterval(function() {
+                location.reload();
+            }, 300000); // 5 minutes
+        });
+    </script>
+}

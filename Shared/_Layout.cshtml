@@ -1,0 +1,279 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EasyLearn</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="/images/icon-192.png">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/modern-ui.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/course-system.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/student-learning.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/modern-aesthetic.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/browse-courses.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="fade-in" style="opacity: 0;">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-modern fixed-top">
+            <div class="container">
+                <a class="navbar-brand pulse" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-graduation-cap"></i> EasyLearn
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i> Home</a>
+                        </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-cog"></i> Admin
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="/admin/users"><i class="fas fa-users"></i> Manage Users</a></li>
+                                    <li><a class="dropdown-item" href="/admin/courses/approval"><i class="fas fa-check-circle"></i> Course Approvals</a></li>
+                                    <li><a class="dropdown-item" href="/admin/categories"><i class="fas fa-tags"></i> Categories</a></li>
+                                    <li><a class="dropdown-item" href="/admin/lessons"><i class="fas fa-play-circle"></i> Manage Lessons</a></li>
+                                    <li><a class="dropdown-item" href="/admin/announcements"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+                                </ul>
+                            </li>
+                        }
+                        @if (User.IsInRole("Instructor"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="/instructor/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/instructor/my-courses"><i class="fas fa-book"></i> My Courses</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/instructor/create-course"><i class="fas fa-plus"></i> Create Course</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Student"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="/student/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/student/browse-courses"><i class="fas fa-search"></i> Browse Courses</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/student/my-courses"><i class="fas fa-graduation-cap"></i> My Courses</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/brain-games"><i class="fas fa-puzzle-piece"></i> Brain Games</a>
+                            </li>
+                        }
+
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/help"><i class="fas fa-question-circle"></i> Help</a>
+                        </li>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user"></i> @User.Identity.Name
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Profile" asp-action="Edit"><i class="fas fa-user-edit"></i> Edit Profile</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Register"><i class="fas fa-user-plus"></i> Register</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main role="main" class="pb-3 slide-in" style="margin-top: 76px;">
+        @RenderBody()
+    </main>
+    <footer class="border-top footer text-muted bg-dark text-light mt-5 modern-footer">
+        <div class="container py-5">
+            <div class="row">
+                <!-- About EasyLearn -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="text-white mb-3">
+                        <i class="fas fa-graduation-cap me-2"></i>EasyLearn
+                    </h5>
+                    <p class="small">A comprehensive online learning platform offering video-based courses, interactive quizzes, professional certification, and AI-powered assistance for students worldwide.</p>
+                    <div class="social-links">
+                        <a href="#" class="text-light me-3" title="Facebook"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-light me-3" title="Twitter"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-light me-3" title="LinkedIn"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="text-light me-3" title="YouTube"><i class="fab fa-youtube fa-lg"></i></a>
+                        <a href="#" class="text-light" title="Instagram"><i class="fab fa-instagram fa-lg"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="text-white mb-3">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/" class="text-light text-decoration-none"><i class="fas fa-home me-1"></i>Home</a></li>
+                        <li class="mb-2"><a href="/student/browse-courses" class="text-light text-decoration-none"><i class="fas fa-book me-1"></i>Courses</a></li>
+                        <li class="mb-2"><a href="/help" class="text-light text-decoration-none"><i class="fas fa-question-circle me-1"></i>Help Center</a></li>
+                        <li class="mb-2"><a href="/help/faq" class="text-light text-decoration-none"><i class="fas fa-question me-1"></i>FAQ</a></li>
+                        <li class="mb-2"><a href="/help/contact" class="text-light text-decoration-none"><i class="fas fa-envelope me-1"></i>Contact</a></li>
+                        <li class="mb-2"><a href="/verification/verify-certificate" class="text-light text-decoration-none"><i class="fas fa-certificate me-1"></i>Verify Certificate</a></li>
+                    </ul>
+                </div>
+
+                <!-- For Students -->
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="text-white mb-3">For Students</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/account/register" class="text-light text-decoration-none"><i class="fas fa-user-plus me-1"></i>Register</a></li>
+                        <li class="mb-2"><a href="/account/login" class="text-light text-decoration-none"><i class="fas fa-sign-in-alt me-1"></i>Login</a></li>
+                        <li class="mb-2"><a href="/student/dashboard" class="text-light text-decoration-none"><i class="fas fa-tachometer-alt me-1"></i>Dashboard</a></li>
+                        <li class="mb-2"><a href="/student/my-courses" class="text-light text-decoration-none"><i class="fas fa-graduation-cap me-1"></i>My Courses</a></li>
+                        <li class="mb-2"><a href="/student/my-exams" class="text-light text-decoration-none"><i class="fas fa-clipboard-check me-1"></i>My Exams</a></li>
+                        <li class="mb-2"><a href="/help/student" class="text-light text-decoration-none"><i class="fas fa-info-circle me-1"></i>Student Guide</a></li>
+                    </ul>
+                </div>
+
+                <!-- For Instructors -->
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="text-white mb-3">For Instructors</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/instructor/dashboard" class="text-light text-decoration-none"><i class="fas fa-tachometer-alt me-1"></i>Dashboard</a></li>
+                        <li class="mb-2"><a href="/instructor/create-course" class="text-light text-decoration-none"><i class="fas fa-plus me-1"></i>Create Course</a></li>
+                        <li class="mb-2"><a href="/instructor/my-courses" class="text-light text-decoration-none"><i class="fas fa-book me-1"></i>My Courses</a></li>
+                        <li class="mb-2"><a href="/instructor/exam-management" class="text-light text-decoration-none"><i class="fas fa-clipboard-list me-1"></i>Exam Management</a></li>
+                        <li class="mb-2"><a href="/help/instructor" class="text-light text-decoration-none"><i class="fas fa-chalkboard-teacher me-1"></i>Instructor Guide</a></li>
+                    </ul>
+                </div>
+
+                <!-- Platform Info -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h6 class="text-white mb-3">Platform Features</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Free Course Enrollment</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>HD Video Lessons (YouTube)</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Interactive Quizzes & Exams</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Professional Certificates</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Progress Tracking</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Multiple Payment Methods</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>QR Code Verification</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>AI Learning Assistant</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <hr class="my-4 border-secondary">
+
+            <!-- Bottom Section -->
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
+                    <div class="d-flex flex-wrap align-items-center">
+                        <span class="me-3">&copy; 2025 EasyLearn - Online Learning Platform</span>
+                        <span class="me-3">|</span>
+                        <span class="me-3">Developed by <strong>Parth Parmar</strong></span>
+                        <span class="me-3">|</span>
+                        <span>Built with ASP.NET Core 9.0</span>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-12">
+                    <div class="d-flex flex-wrap justify-content-lg-end">
+                        <a href="#" class="text-light text-decoration-none me-3 small">Privacy Policy</a>
+                        <a href="#" class="text-light text-decoration-none me-3 small">Terms of Service</a>
+                        <a href="#" class="text-light text-decoration-none me-3 small">Cookie Policy</a>
+                        <a href="/help/contact" class="text-light text-decoration-none small">Support</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technology Stack -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card bg-secondary text-light">
+                        <div class="card-body py-3">
+                            <div class="row align-items-center">
+                                <div class="col-lg-8 col-md-12 mb-2 mb-lg-0">
+                                    <h6 class="mb-2"><i class="fas fa-video me-2"></i>Video Content Powered by YouTube</h6>
+                                    <p class="small mb-0">All video lessons are hosted on YouTube for optimal streaming quality and reliability. We integrate YouTube videos seamlessly into our learning platform to provide the best educational experience.</p>
+                                </div>
+                                <div class="col-lg-4 col-md-12 text-lg-end">
+                                    <div class="tech-stack">
+                                        <span class="badge bg-primary me-1 mb-1">ASP.NET Core 9.0</span>
+                                        <span class="badge bg-success me-1 mb-1">Entity Framework</span>
+                                        <span class="badge bg-info me-1 mb-1">Bootstrap 5</span>
+                                        <span class="badge bg-warning me-1 mb-1">SQL Server</span>
+                                        <span class="badge bg-danger me-1 mb-1">YouTube API</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="row text-center">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="stat-item">
+                                <h4 class="text-primary mb-1"><i class="fas fa-users"></i> 1000+</h4>
+                                <small>Active Students</small>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="stat-item">
+                                <h4 class="text-success mb-1"><i class="fas fa-book"></i> 50+</h4>
+                                <small>Quality Courses</small>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="stat-item">
+                                <h4 class="text-warning mb-1"><i class="fas fa-certificate"></i> 500+</h4>
+                                <small>Certificates Issued</small>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="stat-item">
+                                <h4 class="text-info mb-1"><i class="fas fa-chalkboard-teacher"></i> 25+</h4>
+                                <small>Expert Instructors</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/modern-ui.js" asp-append-version="true"></script>
+    <script src="~/js/modern-aesthetic.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

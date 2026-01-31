@@ -1,0 +1,423 @@
+@model EasyLearn.Models.ViewModels.PuzzleResultViewModel
+@{
+    ViewData["Title"] = "Game Result - " + Model.Game.Title;
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card result-card">
+                <div class="card-header text-center bg-@(Model.Attempt.Status == EasyLearn.Models.GameStatus.Completed ? "success" : Model.Attempt.Status == EasyLearn.Models.GameStatus.AutoSolved ? "info" : "warning")">
+                    <div class="result-icon mb-3">
+                        @switch (Model.Attempt.Status)
+                        {
+                            case EasyLearn.Models.GameStatus.Completed:
+                                <i class="fas fa-trophy fa-4x text-white"></i>
+                                break;
+                            case EasyLearn.Models.GameStatus.AutoSolved:
+                                <i class="fas fa-magic fa-4x text-white"></i>
+                                break;
+                            default:
+                                <i class="fas fa-clock fa-4x text-white"></i>
+                                break;
+                        }
+                    </div>
+                    <h2 class="text-white mb-0">
+                        @switch (Model.Attempt.Status)
+                        {
+                            case EasyLearn.Models.GameStatus.Completed:
+                                <text>🎉 Puzzle Completed!</text>
+                                break;
+                            case EasyLearn.Models.GameStatus.AutoSolved:
+                                <text>🔮 Auto-Solved</text>
+                                break;
+                            default:
+                                <text>⏰ Time's Up!</text>
+                                break;
+                        }
+                    </h2>
+                    <p class="text-white mb-0">@Model.PerformanceMessage</p>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Game Info -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-puzzle-piece text-primary"></i> @Model.Game.Title</h5>
+                            <p class="text-muted mb-1">
+                                <span class="badge bg-secondary me-2">@Model.Game.Type</span>
+                                <span class="badge badge-difficulty-@Model.Game.Difficulty.ToString().ToLower()">@Model.Game.Difficulty</span>
+                            </p>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <p class="mb-1"><strong>Date:</strong> @Model.Attempt.StartedAt.ToString("MMM dd, yyyy HH:mm")</p>
+                            <p class="mb-0"><strong>Status:</strong> 
+                                @switch (Model.Attempt.Status)
+                                {
+                                    case EasyLearn.Models.GameStatus.Completed:
+                                        <span class="badge bg-success">Completed</span>
+                                        break;
+                                    case EasyLearn.Models.GameStatus.AutoSolved:
+                                        <span class="badge bg-info">Auto-Solved</span>
+                                        break;
+                                    default:
+                                        <span class="badge bg-warning">Time Expired</span>
+                                        break;
+                                }
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Performance Stats -->
+                    <div class="row mb-4">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="stat-card text-center">
+                                <div class="stat-icon">
+                                    <i class="fas fa-star fa-2x text-warning"></i>
+                                </div>
+                                <h3 class="stat-value">@Model.Attempt.Score</h3>
+                                <p class="stat-label">Final Score</p>
+                                @if (Model.IsNewBestScore)
+                                {
+                                    <span class="badge bg-success">New Best!</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="stat-card text-center">
+                                <div class="stat-icon">
+                                    <i class="fas fa-clock fa-2x text-info"></i>
+                                </div>
+                                <h3 class="stat-value">@TimeSpan.FromSeconds(Model.Attempt.TimeTakenSeconds).ToString(@"mm\:ss")</h3>
+                                <p class="stat-label">Time Taken</p>
+                                @if (Model.IsNewBestTime)
+                                {
+                                    <span class="badge bg-success">New Best!</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="stat-card text-center">
+                                <div class="stat-icon">
+                                    <i class="fas fa-mouse-pointer fa-2x text-primary"></i>
+                                </div>
+                                <h3 class="stat-value">@Model.Attempt.MovesCount</h3>
+                                <p class="stat-label">Moves Made</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="stat-card text-center">
+                                <div class="stat-icon">
+                                    <i class="fas fa-lightbulb fa-2x text-warning"></i>
+                                </div>
+                                <h3 class="stat-value">@Model.Attempt.HintsUsed</h3>
+                                <p class="stat-label">Hints Used</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Analysis -->
+                    @if (Model.Attempt.Status == EasyLearn.Models.GameStatus.Completed)
+                    {
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="performance-analysis">
+                                    <h5><i class="fas fa-chart-line text-success"></i> Performance Analysis</h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="analysis-item">
+                                                <strong>Efficiency:</strong>
+                                                @{
+                                                    var efficiency = Model.Game.MaxScore > 0 ? (Model.Attempt.Score * 100.0 / Model.Game.MaxScore) : 0;
+                                                }
+                                                <div class="progress mt-1">
+                                                    <div class="progress-bar bg-@(efficiency >= 80 ? "success" : efficiency >= 60 ? "warning" : "danger")" 
+                                                         style="width: @efficiency%"></div>
+                                                </div>
+                                                <small class="text-muted">@efficiency.ToString("F1")% of maximum score</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="analysis-item">
+                                                <strong>Speed:</strong>
+                                                @{
+                                                    var avgTimePerMove = Model.Attempt.MovesCount > 0 ? Model.Attempt.TimeTakenSeconds / (double)Model.Attempt.MovesCount : 0;
+                                                }
+                                                <p class="mb-1">@avgTimePerMove.ToString("F1") seconds per move</p>
+                                                <small class="text-muted">
+                                                    @(avgTimePerMove < 10 ? "Lightning fast!" : avgTimePerMove < 30 ? "Good pace" : "Take your time")
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Ranking -->
+                    @if (Model.Rank > 0)
+                    {
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="ranking-info text-center">
+                                    <h5><i class="fas fa-trophy text-warning"></i> Your Ranking</h5>
+                                    <div class="rank-display">
+                                        @if (Model.Rank == 1)
+                                        {
+                                            <i class="fas fa-crown fa-3x text-warning mb-2"></i>
+                                            <h3 class="text-warning">🥇 #1 - Champion!</h3>
+                                        }
+                                        else if (Model.Rank == 2)
+                                        {
+                                            <i class="fas fa-medal fa-3x text-secondary mb-2"></i>
+                                            <h3 class="text-secondary">🥈 #2 - Excellent!</h3>
+                                        }
+                                        else if (Model.Rank == 3)
+                                        {
+                                            <i class="fas fa-medal fa-3x text-warning mb-2"></i>
+                                            <h3 class="text-warning">🥉 #3 - Great job!</h3>
+                                        }
+                                        else
+                                        {
+                                            <h3 class="text-primary">#@Model.Rank</h3>
+                                        }
+                                        <p class="text-muted">Out of all players for this puzzle</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Action Buttons -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-flex flex-wrap justify-content-center gap-2">
+                                <a href="@Url.Action("GameDetails", new { gameId = Model.Game.Id })" class="btn btn-primary">
+                                    <i class="fas fa-redo"></i> Play Again
+                                </a>
+                                <a href="@Url.Action("Leaderboard", new { gameId = Model.Game.Id })" class="btn btn-outline-warning">
+                                    <i class="fas fa-trophy"></i> View Leaderboard
+                                </a>
+                                <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                                    <i class="fas fa-home"></i> Back to Games
+                                </a>
+                                @if (Model.Game.Type == EasyLearn.Models.PuzzleType.Sudoku)
+                                {
+                                    <a href="@Url.Action("Sudoku")" class="btn btn-outline-info">
+                                        <i class="fas fa-th"></i> More Sudoku
+                                    </a>
+                                }
+                                else if (Model.Game.Type == EasyLearn.Models.PuzzleType.WordPuzzle)
+                                {
+                                    <a href="@Url.Action("WordPuzzle")" class="btn btn-outline-success">
+                                        <i class="fas fa-font"></i> More Word Puzzles
+                                    </a>
+                                }
+                                else if (Model.Game.Type == EasyLearn.Models.PuzzleType.LogicPuzzle)
+                                {
+                                    <a href="@Url.Action("Logic")" class="btn btn-outline-info">
+                                        <i class="fas fa-brain"></i> More Logic Games
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Share Results -->
+            <div class="card mt-4">
+                <div class="card-body text-center">
+                    <h6><i class="fas fa-share-alt"></i> Share Your Achievement</h6>
+                    <p class="text-muted small">Let others know about your puzzle-solving skills!</p>
+                    <div class="share-buttons">
+                        <button class="btn btn-outline-primary btn-sm" onclick="shareResult('twitter')">
+                            <i class="fab fa-twitter"></i> Twitter
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="shareResult('facebook')">
+                            <i class="fab fa-facebook"></i> Facebook
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="copyResult()">
+                            <i class="fas fa-copy"></i> Copy Link
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Animate the result card
+            $('.result-card').addClass('animate__animated animate__fadeInUp');
+            
+            // Animate stats
+            $('.stat-value').each(function() {
+                const $this = $(this);
+                const finalValue = parseInt($this.text());
+                $this.text('0');
+                
+                $({ value: 0 }).animate({ value: finalValue }, {
+                    duration: 1500,
+                    easing: 'swing',
+                    step: function() {
+                        $this.text(Math.floor(this.value));
+                    },
+                    complete: function() {
+                        $this.text(finalValue);
+                    }
+                });
+            });
+        });
+
+        function shareResult(platform) {
+            const text = `I just completed a ${@Html.Raw(Json.Serialize(Model.Game.Difficulty.ToString()))} ${@Html.Raw(Json.Serialize(Model.Game.Type.ToString()))} puzzle with a score of ${@Model.Attempt.Score}! 🧩`;
+            const url = window.location.href;
+            
+            let shareUrl = '';
+            switch(platform) {
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+                    break;
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+                    break;
+            }
+            
+            if (shareUrl) {
+                window.open(shareUrl, '_blank', 'width=600,height=400');
+            }
+        }
+
+        function copyResult() {
+            const text = `I just completed a ${@Html.Raw(Json.Serialize(Model.Game.Difficulty.ToString()))} ${@Html.Raw(Json.Serialize(Model.Game.Type.ToString()))} puzzle with a score of ${@Model.Attempt.Score}! Check it out: ${window.location.href}`;
+            
+            navigator.clipboard.writeText(text).then(function() {
+                Swal.fire({
+                    title: 'Copied!',
+                    text: 'Result copied to clipboard',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            });
+        }
+    </script>
+
+    <style>
+        .result-card {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .result-icon {
+            animation: bounce 2s infinite;
+        }
+
+        @@keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+            color: #333;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .performance-analysis {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .analysis-item {
+            margin-bottom: 15px;
+        }
+
+        .ranking-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+        .rank-display h3 {
+            margin: 10px 0;
+        }
+
+        .badge-difficulty-easy {
+            background-color: #28a745;
+        }
+        
+        .badge-difficulty-medium {
+            background-color: #ffc107;
+            color: #000;
+        }
+        
+        .badge-difficulty-hard {
+            background-color: #fd7e14;
+        }
+        
+        .badge-difficulty-expert {
+            background-color: #dc3545;
+        }
+
+        .share-buttons .btn {
+            margin: 0 5px;
+        }
+
+        @@media (max-width: 768px) {
+            .stat-value {
+                font-size: 1.5rem;
+            }
+            
+            .ranking-info {
+                padding: 20px;
+            }
+            
+            .d-flex.gap-2 {
+                flex-direction: column;
+            }
+            
+            .d-flex.gap-2 .btn {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+}

@@ -1,0 +1,150 @@
+@model EasyLearn.Models.ViewModels.PuzzleStats
+@{
+    ViewData["Title"] = "My Puzzle Statistics";
+    var detailedStats = ViewBag.DetailedStats as List<dynamic>;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-0">📊 My Puzzle Statistics</h2>
+                    <p class="text-muted mb-0">Track your puzzle-solving progress</p>
+                </div>
+                <div>
+                    <a href="@Url.Action("Index", "Puzzle")" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Puzzles
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-gamepad fa-2x text-primary mb-2"></i>
+                    <h4 class="text-primary">@Model.TotalGamesPlayed</h4>
+                    <p class="text-muted mb-0">Games Played</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-trophy fa-2x text-success mb-2"></i>
+                    <h4 class="text-success">@Model.TotalGamesCompleted</h4>
+                    <p class="text-muted mb-0">Games Completed</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-star fa-2x text-warning mb-2"></i>
+                    <h4 class="text-warning">@Model.AverageScore.ToString("F1")</h4>
+                    <p class="text-muted mb-0">Average Score</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-clock fa-2x text-info mb-2"></i>
+                    <h4 class="text-info">@TimeSpan.FromSeconds(Model.TotalTimePlayed).ToString(@"hh\:mm")</h4>
+                    <p class="text-muted mb-0">Time Played</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (detailedStats != null && detailedStats.Any())
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Statistics by Game Type</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Game Type</th>
+                                        <th>Played</th>
+                                        <th>Completed</th>
+                                        <th>Success Rate</th>
+                                        <th>Avg Score</th>
+                                        <th>Best Score</th>
+                                        <th>Total Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var stat in detailedStats)
+                                    {
+                                        var successRate = stat.TotalPlayed > 0 ? (stat.TotalCompleted * 100.0 / stat.TotalPlayed) : 0;
+                                        <tr>
+                                            <td>
+                                                @switch (stat.Type.ToString())
+                                                {
+                                                    case "Sudoku":
+                                                        <i class="fas fa-th text-primary"></i> <text>Sudoku</text>
+                                                        break;
+                                                    case "WordPuzzle":
+                                                        <i class="fas fa-font text-success"></i> <text>Word Puzzle</text>
+                                                        break;
+                                                    case "LogicPuzzle":
+                                                        <i class="fas fa-brain text-warning"></i> <text>Logic Puzzle</text>
+                                                        break;
+                                                    case "PatternMatching":
+                                                        <i class="fas fa-memory text-info"></i> <text>Memory Game</text>
+                                                        break;
+                                                    case "NumberSequence":
+                                                        <i class="fas fa-calculator text-danger"></i> <text>Math Game</text>
+                                                        break;
+                                                    default:
+                                                        <i class="fas fa-puzzle-piece"></i> @stat.Type
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>@stat.TotalPlayed</td>
+                                            <td>@stat.TotalCompleted</td>
+                                            <td>
+                                                <span class="badge @(successRate >= 70 ? "bg-success" : successRate >= 50 ? "bg-warning" : "bg-danger")">
+                                                    @successRate.ToString("F1")%
+                                                </span>
+                                            </td>
+                                            <td>@stat.AverageScore.ToString("F1")</td>
+                                            <td><strong>@stat.BestScore</strong></td>
+                                            <td>@TimeSpan.FromSeconds(stat.TotalTime).ToString(@"hh\:mm\:ss")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                        <h5>No Statistics Available</h5>
+                        <p class="text-muted">Start playing puzzles to see your statistics here!</p>
+                        <a href="@Url.Action("Index", "Puzzle")" class="btn btn-primary">
+                            <i class="fas fa-play"></i> Start Playing
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

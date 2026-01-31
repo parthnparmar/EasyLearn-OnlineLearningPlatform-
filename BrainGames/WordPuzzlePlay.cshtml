@@ -1,0 +1,230 @@
+@model EasyLearn.Models.ViewModels.PuzzlePlayViewModel
+@{
+    ViewData["Title"] = "Word Puzzle - " + Model.Game.Title;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="mb-0">📝 @Model.Game.Title</h3>
+                    <p class="text-muted mb-0">Difficulty: <span class="badge badge-difficulty-@Model.Game.Difficulty.ToString().ToLower()">@Model.Game.Difficulty</span></p>
+                </div>
+                <div>
+                    <a href="@Url.Action("Word", "BrainGames")" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Word Games
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Word Scramble Challenge</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="scrambled-word mb-4">
+                        <h1 class="text-primary scrambled-letters" id="scrambled-display">RETUPMOC</h1>
+                        <p class="text-muted">Unscramble this word!</p>
+                        <small class="text-info">Category: Technology</small>
+                    </div>
+                    
+                    <div class="answer-input mb-4">
+                        <input type="text" id="answer-input" class="form-control form-control-lg text-center" placeholder="Enter the unscrambled word" style="max-width: 300px; margin: 0 auto;">
+                    </div>
+                    
+                    <div class="game-controls">
+                        <button type="button" class="btn btn-success btn-lg me-2" id="submit-answer">
+                            <i class="fas fa-check"></i> Submit Answer
+                        </button>
+                        <button type="button" class="btn btn-warning btn-lg me-2" id="hint-btn">
+                            <i class="fas fa-lightbulb"></i> Get Hint
+                        </button>
+                        <button type="button" class="btn btn-info btn-lg" id="shuffle-btn">
+                            <i class="fas fa-random"></i> Shuffle Letters
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-info-circle"></i> Game Status</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h4 class="text-primary" id="score-display">@Model.Attempt.Score</h4>
+                            <small class="text-muted">Score</small>
+                        </div>
+                        <div class="col-6">
+                            <h4 class="text-info" id="time-display">00:00</h4>
+                            <small class="text-muted">Time</small>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h5 class="text-success" id="hints-used">0</h5>
+                            <small class="text-muted">Hints Used</small>
+                        </div>
+                        <div class="col-6">
+                            <h5 class="text-warning" id="attempts">0</h5>
+                            <small class="text-muted">Attempts</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-question-circle"></i> How to Play</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Unscramble the letters to form a word
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Use the category hint to help you
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Shuffle letters for a different arrangement
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            Get hints if you're stuck!
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .scrambled-letters {
+            letter-spacing: 0.2em;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        
+        .letter-animation {
+            animation: bounce 0.5s ease-in-out;
+        }
+        
+        @@keyframes bounce {
+            0%, 20%, 60%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            80% { transform: translateY(-5px); }
+        }
+    </style>
+    <script>
+        let correctAnswer = 'COMPUTER';
+        let scrambledWord = 'RETUPMOC';
+        let attempts = 0;
+        let hintsUsed = 0;
+        let startTime = Date.now();
+        let timer;
+
+        $(document).ready(function() {
+            startTimer();
+            
+            $('#submit-answer').click(submitAnswer);
+            $('#hint-btn').click(getHint);
+            $('#shuffle-btn').click(shuffleLetters);
+            
+            $('#answer-input').keypress(function(e) {
+                if (e.which === 13) {
+                    submitAnswer();
+                }
+            });
+        });
+
+        function startTimer() {
+            timer = setInterval(function() {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                $('#time-display').text(minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0'));
+            }, 1000);
+        }
+
+        function submitAnswer() {
+            const answer = $('#answer-input').val().toUpperCase().trim();
+            if (!answer) {
+                Swal.fire('Please enter an answer!', '', 'warning');
+                return;
+            }
+
+            attempts++;
+            $('#attempts').text(attempts);
+
+            if (answer === correctAnswer) {
+                clearInterval(timer);
+                Swal.fire({
+                    title: '🎉 Correct!',
+                    text: `Well done! The word was "${correctAnswer}".`,
+                    icon: 'success',
+                    confirmButtonText: 'Continue'
+                }).then(() => {
+                    window.location.href = '@Url.Action("Word", "BrainGames")';
+                });
+            } else {
+                Swal.fire({
+                    title: 'Not quite right',
+                    text: 'Try again! Think about the category hint.',
+                    icon: 'error',
+                    confirmButtonText: 'Try Again'
+                });
+                $('#answer-input').val('').focus();
+            }
+        }
+
+        function getHint() {
+            hintsUsed++;
+            $('#hints-used').text(hintsUsed);
+            
+            const hints = [
+                'This device is used for processing data and running programs.',
+                'It has a keyboard, mouse, and monitor as common peripherals.',
+                'The word starts with "C" and ends with "R".'
+            ];
+            
+            const hintIndex = Math.min(hintsUsed - 1, hints.length - 1);
+            
+            Swal.fire({
+                title: '💡 Hint',
+                text: hints[hintIndex],
+                icon: 'info',
+                confirmButtonText: 'Got it!'
+            });
+        }
+
+        function shuffleLetters() {
+            const letters = scrambledWord.split('');
+            for (let i = letters.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [letters[i], letters[j]] = [letters[j], letters[i]];
+            }
+            scrambledWord = letters.join('');
+            
+            $('#scrambled-display').addClass('letter-animation').text(scrambledWord);
+            
+            setTimeout(() => {
+                $('#scrambled-display').removeClass('letter-animation');
+            }, 500);
+        }
+    </script>
+}

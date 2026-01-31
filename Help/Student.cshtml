@@ -1,0 +1,402 @@
+@{
+    ViewData["Title"] = "Student Help Guide - EasyLearn";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h4 class="mb-0 text-primary">
+                                <i class="fas fa-user-graduate me-2"></i>Student Help Guide
+                            </h4>
+                            <p class="text-sm mb-0">Complete guide for students using EasyLearn</p>
+                        </div>
+                        <div class="ms-auto">
+                            <a href="/help" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Help
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Table of Contents -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="text-primary mb-3">Quick Navigation</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled">
+                                                <li><a href="#registration" class="text-decoration-none">1. Registration & Login</a></li>
+                                                <li><a href="#dashboard" class="text-decoration-none">2. Student Dashboard</a></li>
+                                                <li><a href="#courses" class="text-decoration-none">3. Course Enrollment</a></li>
+                                                <li><a href="#learning" class="text-decoration-none">4. Video Learning</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled">
+                                                <li><a href="#quizzes" class="text-decoration-none">5. Taking Quizzes</a></li>
+                                                <li><a href="#exams" class="text-decoration-none">6. Exam Process</a></li>
+                                                <li><a href="#certificates" class="text-decoration-none">7. Certificates</a></li>
+                                                <li><a href="#payments" class="text-decoration-none">8. Payment Process</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Registration & Login -->
+                    <div id="registration" class="mb-5">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-user-plus me-2"></i>1. Registration & Login
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Creating Your Account</h6>
+                                <ol>
+                                    <li>Visit the EasyLearn homepage</li>
+                                    <li>Click "Register" in the top navigation</li>
+                                    <li>Fill in your details:
+                                        <ul>
+                                            <li>First Name & Last Name</li>
+                                            <li>Email Address (will be your username)</li>
+                                            <li>Password (minimum 6 characters)</li>
+                                            <li>Confirm Password</li>
+                                        </ul>
+                                    </li>
+                                    <li>Click "Register" to create your account</li>
+                                    <li>You'll be automatically logged in as a Student</li>
+                                </ol>
+                                
+                                <h6 class="mt-4">Social Login Options</h6>
+                                <p>You can also register/login using:</p>
+                                <ul>
+                                    <li><i class="fab fa-google text-danger"></i> Google Account</li>
+                                    <li><i class="fab fa-facebook text-primary"></i> Facebook Account</li>
+                                    <li><i class="fab fa-github text-dark"></i> GitHub Account</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Student Dashboard -->
+                    <div id="dashboard" class="mb-5">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-tachometer-alt me-2"></i>2. Student Dashboard
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <p>Your dashboard shows:</p>
+                                <ul>
+                                    <li><strong>Enrolled Courses:</strong> Courses you're currently taking</li>
+                                    <li><strong>Progress Overview:</strong> Your learning progress</li>
+                                    <li><strong>Certificates:</strong> Earned certificates</li>
+                                    <li><strong>Recommended Courses:</strong> Suggested courses based on ratings</li>
+                                </ul>
+                                
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Profile Reminder:</strong> Complete your profile for better experience and certificate generation.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Course Enrollment -->
+                    <div id="courses" class="mb-5">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-book me-2"></i>3. Course Enrollment
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Finding Courses</h6>
+                                <ol>
+                                    <li>Go to "Browse Courses" from the navigation menu</li>
+                                    <li>Use filters to find courses:
+                                        <ul>
+                                            <li>Category filter</li>
+                                            <li>Search by keywords</li>
+                                            <li>Sort by rating, newest, or popularity</li>
+                                        </ul>
+                                    </li>
+                                    <li>Click on a course to view details</li>
+                                </ol>
+
+                                <h6 class="mt-4">Enrolling in a Course</h6>
+                                <ol>
+                                    <li>On the course details page, click "Enroll Now"</li>
+                                    <li>Verify your details (name, email, phone)</li>
+                                    <li>Click "Enroll" to complete enrollment</li>
+                                    <li>All courses are currently free!</li>
+                                </ol>
+
+                                <div class="alert alert-success">
+                                    <i class="fas fa-gift me-2"></i>
+                                    <strong>Free Courses:</strong> All courses on EasyLearn are currently free to enroll!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video Learning -->
+                    <div id="learning" class="mb-5">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-play-circle me-2"></i>4. Video Learning
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Accessing Course Content</h6>
+                                <ol>
+                                    <li>Go to "My Courses" to see enrolled courses</li>
+                                    <li>Click "View Content" on any course</li>
+                                    <li>You'll see all available lessons</li>
+                                    <li>Click on any lesson to start watching</li>
+                                </ol>
+
+                                <h6 class="mt-4">Video Player Features</h6>
+                                <ul>
+                                    <li><strong>Progress Tracking:</strong> Your progress is automatically saved</li>
+                                    <li><strong>Lesson Navigation:</strong> Previous/Next lesson buttons</li>
+                                    <li><strong>Course Progress:</strong> Visual progress indicator</li>
+                                    <li><strong>Material Downloads:</strong> Download lesson materials if available</li>
+                                </ul>
+
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <strong>Note:</strong> You must be enrolled in a course to access video lessons.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Taking Quizzes -->
+                    <div id="quizzes" class="mb-5">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-question-circle me-2"></i>5. Taking Quizzes
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Quiz System</h6>
+                                <ul>
+                                    <li><strong>Question Types:</strong> Multiple choice and True/False</li>
+                                    <li><strong>Scoring System:</strong>
+                                        <ul>
+                                            <li>Correct Answer: +2 points</li>
+                                            <li>Wrong Answer: -1 point</li>
+                                            <li>Unattempted: 0 points</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Passing Score:</strong> Usually 60-70% (varies by quiz)</li>
+                                </ul>
+
+                                <h6 class="mt-4">Taking a Quiz</h6>
+                                <ol>
+                                    <li>Navigate to the course content</li>
+                                    <li>Find the quiz section</li>
+                                    <li>Click "Take Quiz"</li>
+                                    <li>Answer all questions</li>
+                                    <li>Click "Submit Quiz"</li>
+                                    <li>View your results immediately</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exam Process -->
+                    <div id="exams" class="mb-5">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-clipboard-check me-2"></i>6. Exam Process
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Pre-Exam Verification</h6>
+                                <p>Before taking any exam, you must complete verification:</p>
+                                <ol>
+                                    <li>Provide accurate personal details</li>
+                                    <li>Solve a simple CAPTCHA problem</li>
+                                    <li>Agree to terms and conditions</li>
+                                    <li>Submit verification form</li>
+                                </ol>
+
+                                <h6 class="mt-4">Exam Structure</h6>
+                                <ul>
+                                    <li><strong>Part A:</strong> Multiple Choice Questions (50 marks)</li>
+                                    <li><strong>Part B:</strong> Written Questions (30 marks)</li>
+                                    <li><strong>Internal Assessment:</strong> Instructor graded (20 marks)</li>
+                                    <li><strong>Total:</strong> 100 marks</li>
+                                    <li><strong>Passing:</strong> 75% required</li>
+                                </ul>
+
+                                <h6 class="mt-4">Exam Schedule</h6>
+                                <ul>
+                                    <li>Instructors assign specific exam dates and times</li>
+                                    <li>Check "My Exams" for your scheduled exams</li>
+                                    <li>Exams are available only during assigned time slots</li>
+                                </ul>
+
+                                <div class="alert alert-danger">
+                                    <i class="fas fa-clock me-2"></i>
+                                    <strong>Important:</strong> Exams have strict time limits and cannot be paused once started.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Certificates -->
+                    <div id="certificates" class="mb-5">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-certificate me-2"></i>7. Certificates
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Course Certificates</h6>
+                                <ul>
+                                    <li>Complete all course lessons and quizzes</li>
+                                    <li>Pay certificate fee (₹500 + ₹300 exam fee = ₹800)</li>
+                                    <li>Download your professional certificate</li>
+                                </ul>
+
+                                <h6 class="mt-4">Exam Certificates</h6>
+                                <ul>
+                                    <li>Pass the exam with 75% or higher</li>
+                                    <li>Certificate generated automatically after result publication</li>
+                                    <li>Download from "My Exams" or "Exam Results"</li>
+                                </ul>
+
+                                <h6 class="mt-4">Certificate Features</h6>
+                                <ul>
+                                    <li><strong>QR Code Verification:</strong> Each certificate has a unique QR code</li>
+                                    <li><strong>Digital Signatures:</strong> Instructor and platform signatures</li>
+                                    <li><strong>Validity:</strong> 1 year from issue date</li>
+                                    <li><strong>Professional Format:</strong> High-quality PDF format</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Process -->
+                    <div id="payments" class="mb-5">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-credit-card me-2"></i>8. Payment Process
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Payment Methods</h6>
+                                <ul>
+                                    <li><i class="fas fa-mobile-alt text-success"></i> UPI Payments</li>
+                                    <li><i class="fas fa-credit-card text-primary"></i> Credit/Debit Cards</li>
+                                    <li><i class="fas fa-qrcode text-info"></i> QR Code Payments</li>
+                                    <li><i class="fas fa-wallet text-warning"></i> Digital Wallets (Google Pay, PhonePe, Paytm)</li>
+                                </ul>
+
+                                <h6 class="mt-4">Certificate Payment</h6>
+                                <ol>
+                                    <li>Complete the course (100% progress)</li>
+                                    <li>Go to course details page</li>
+                                    <li>Click "Get Certificate"</li>
+                                    <li>Choose payment method</li>
+                                    <li>Complete payment (₹800 total)</li>
+                                    <li>Download certificate immediately</li>
+                                </ol>
+
+                                <h6 class="mt-4">Re-exam Payment</h6>
+                                <p>If you fail an exam, you can retake it:</p>
+                                <ul>
+                                    <li>Pay re-exam fee (₹200)</li>
+                                    <li>Retake during the same exam session</li>
+                                    <li>New attempt with fresh questions</li>
+                                </ul>
+
+                                <div class="alert alert-info">
+                                    <i class="fas fa-receipt me-2"></i>
+                                    <strong>Receipts:</strong> All payments generate automatic PDF receipts for your records.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tips & Best Practices -->
+                    <div class="mb-5">
+                        <h5 class="text-success mb-3">
+                            <i class="fas fa-lightbulb me-2"></i>Tips & Best Practices
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>Learning Tips</h6>
+                                        <ul>
+                                            <li>Complete lessons in order</li>
+                                            <li>Take notes while watching videos</li>
+                                            <li>Practice with quizzes regularly</li>
+                                            <li>Review course materials before exams</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>Exam Preparation</h6>
+                                        <ul>
+                                            <li>Ensure stable internet connection</li>
+                                            <li>Find a quiet environment</li>
+                                            <li>Complete verification in advance</li>
+                                            <li>Read all instructions carefully</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Support -->
+                    <div class="text-center">
+                        <div class="card bg-gradient-primary text-white">
+                            <div class="card-body">
+                                <h5>Need More Help?</h5>
+                                <p class="mb-3">If you have questions not covered in this guide, our support team is here to help!</p>
+                                <a href="/help/contact" class="btn btn-light">
+                                    <i class="fas fa-envelope me-1"></i>Contact Support
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card.bg-gradient-primary {
+        background: linear-gradient(45deg, #007bff, #0056b3) !important;
+    }
+    
+    h5 {
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 10px;
+    }
+    
+    .alert {
+        border-left: 4px solid;
+    }
+    
+    .alert-info {
+        border-left-color: #17a2b8;
+    }
+    
+    .alert-success {
+        border-left-color: #28a745;
+    }
+    
+    .alert-warning {
+        border-left-color: #ffc107;
+    }
+    
+    .alert-danger {
+        border-left-color: #dc3545;
+    }
+</style>

@@ -1,0 +1,86 @@
+@model List<EasyLearn.Models.Exam>
+
+@{
+    ViewData["Title"] = "Approve Exams";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h5 class="mb-0">Pending Exam Approvals</h5>
+                    <p class="text-sm mb-0">Review and approve exams submitted by instructors</p>
+                </div>
+                <div class="card-body px-0 pb-0">
+                    <div class="table-responsive">
+                        <table class="table table-flush">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Exam Title</th>
+                                    <th>Course</th>
+                                    <th>Instructor</th>
+                                    <th>Exam Date</th>
+                                    <th>Session</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Any())
+                                {
+                                    @foreach (var exam in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <h6 class="mb-0 text-sm">@exam.Title</h6>
+                                                <p class="text-xs text-secondary mb-0">@exam.Description</p>
+                                            </td>
+                                            <td>
+                                                <span class="text-sm font-weight-bold">@exam.Course.Title</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-sm">@exam.Instructor.FirstName @exam.Instructor.LastName</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-sm">@exam.ScheduledStartTime.ToString("MMM dd, yyyy")</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-sm bg-gradient-info">@exam.ScheduledStartTime.ToString("hh:mm tt")</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-xs text-secondary">@exam.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                            </td>
+                                            <td>
+                                                <form method="post" style="display: inline;">
+                                                    <button type="submit" formaction="/admin/exams/approve/@exam.Id" class="btn btn-success btn-sm">
+                                                        <i class="fas fa-check me-1"></i>Approve
+                                                    </button>
+                                                    <button type="submit" formaction="/admin/exams/reject/@exam.Id" class="btn btn-danger btn-sm ms-1">
+                                                        <i class="fas fa-times me-1"></i>Reject
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <div class="text-center">
+                                                <i class="fas fa-clipboard-check fa-3x text-secondary mb-3"></i>
+                                                <h5 class="text-secondary">No Pending Exams</h5>
+                                                <p class="text-sm text-secondary">All exams have been reviewed</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

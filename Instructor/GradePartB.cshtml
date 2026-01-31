@@ -1,0 +1,265 @@
+@model EasyLearn.Models.ExamAttempt
+@{
+    ViewData["Title"] = "Grade Part B - " + Model.Exam.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">Grade Part B - @Model.Exam.Title</h5>
+                            <p class="text-sm mb-0">Student: @Model.Student.FirstName @Model.Student.LastName</p>
+                        </div>
+                        <div>
+                            <span class="badge bg-gradient-info">Part A Score: @Model.PartAScore/@Model.Exam.PartAMarks</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Grading Instructions:</strong> Review each answer and assign points based on the question's maximum points. The total will be calculated automatically.
+                    </div>
+
+                    <form id="gradingForm" method="post" action="/instructor/submit-part-b-grades">
+                        <input type="hidden" name="examAttemptId" value="@Model.Id" />
+                        
+                        @{
+                            var partBQuestions = Model.Exam.ExamQuestions.Where(q => q.Part == EasyLearn.Models.ExamPart.PartB).OrderBy(q => q.OrderIndex).ToList();
+                            // Ensure we only get answers for THIS specific exam attempt
+                            var partBAnswers = Model.ExamAnswers.Where(ea => ea.ExamAttemptId == Model.Id && partBQuestions.Select(q => q.Id).Contains(ea.ExamQuestionId)).ToList();
+                        }
+                        
+                        @if (partBQuestions.Any())
+                        {
+                            @for (int i = 0; i < partBQuestions.Count; i++)
+                            {
+                                var question = partBQuestions[i];
+                                var answer = partBAnswers.FirstOrDefault(a => a.ExamQuestionId == question.Id);
+                                
+                                <div class="question-card mb-4">
+                                    <div class="card border">
+                                        <div class="card-header bg-light">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h6 class="mb-0">
+                                                    <span class="badge bg-gradient-primary me-2">Q@(i + 1)</span>
+                                                    @question.Text
+                                                </h6>
+                                                <span class="badge bg-gradient-warning">Max: @question.Points points</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <h6 class="text-primary">Student's Answer:</h6>
+                                                    <div class="answer-box p-3 bg-light border rounded">
+                                                        @if (answer != null && !string.IsNullOrEmpty(answer.AnswerText))
+                                                        {
+                                                            <p class="mb-0">@answer.AnswerText</p>
+                                                        }
+                                                        else
+                                                        {
+                                                            <p class="text-muted mb-0"><em>No answer provided</em></p>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <h6 class="text-success">Grade:</h6>
+                                                    <div class="input-group">
+                                                        <input type="number" 
+                                                               class="form-control grade-input" 
+                                                               name="questionGrades[@question.Id]" 
+                                                               min="0" 
+                                                               max="@question.Points" 
+                                                               value="@(answer?.Points ?? 0)"
+                                                               data-max-points="@question.Points"
+                                                               required>
+                                                        <span class="input-group-text">/ @question.Points</span>
+                                                    </div>
+                                                    <small class="text-muted">Enter points (0 to @question.Points)</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            
+                            <!-- Internal Marks Section -->
+                            <div class="card border-info mb-4">
+                                <div class="card-header bg-info text-white">
+                                    <h6 class="mb-0">Internal Assessment</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <h6 class="text-info">Assign Internal Marks:</h6>
+                                            <p class="text-muted mb-0">Based on overall performance, attendance, and participation</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="input-group">
+                                                <input type="number" 
+                                                       class="form-control" 
+                                                       id="internalMarks"
+                                                       name="internalMarks" 
+                                                       min="0" 
+                                                       max="@Model.Exam.InternalMarks" 
+                                                       value="@Model.InternalScore"
+                                                       required>
+                                                <span class="input-group-text">/ @Model.Exam.InternalMarks</span>
+                                            </div>
+                                            <small class="text-muted">Enter internal marks (0 to @Model.Exam.InternalMarks)</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <div class="card border-info">
+                                        <div class="card-body text-center">
+                                            <h4 class="text-info mb-0" id="totalPartBScore">0</h4>
+                                            <p class="mb-0">Total Part B Score</p>
+                                            <small class="text-muted">Out of @partBQuestions.Sum(q => q.Points) points</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-success">
+                                        <div class="card-body text-center">
+                                            <h4 class="text-success mb-0" id="totalExamScore">@Model.PartAScore</h4>
+                                            <p class="mb-0">Total Exam Score</p>
+                                            <small class="text-muted">Part A (@Model.PartAScore) + Part B + Internal (@Model.InternalScore)</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                No Part B questions found for this exam.
+                            </div>
+                        }
+                        
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-success btn-lg me-3" id="submitGrades">
+                                <i class="fas fa-check me-2"></i>Submit Grades & Publish Results
+                            </button>
+                            <a href="/instructor/internal-assessments" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Assessments
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            const partAScore = @Model.PartAScore;
+            let internalScore = @Model.InternalScore;
+            
+            function updateTotals() {
+                let totalPartB = 0;
+                $('.grade-input').each(function() {
+                    const value = parseInt($(this).val()) || 0;
+                    const maxPoints = parseInt($(this).data('max-points'));
+                    
+                    // Validate input
+                    if (value > maxPoints) {
+                        $(this).val(maxPoints);
+                        totalPartB += maxPoints;
+                    } else if (value < 0) {
+                        $(this).val(0);
+                    } else {
+                        totalPartB += value;
+                    }
+                });
+                
+                // Get internal marks
+                internalScore = parseInt($('#internalMarks').val()) || 0;
+                
+                $('#totalPartBScore').text(totalPartB);
+                $('#totalExamScore').text(partAScore + totalPartB + internalScore);
+            }
+            
+            // Update totals on input change
+            $('.grade-input, #internalMarks').on('input change', updateTotals);
+            
+            // Initial calculation
+            updateTotals();
+            
+            // Form submission validation
+            $('#gradingForm').on('submit', function(e) {
+                let isValid = true;
+                let totalPartB = 0;
+                
+                $('.grade-input').each(function() {
+                    const value = parseInt($(this).val());
+                    const maxPoints = parseInt($(this).data('max-points'));
+                    
+                    if (isNaN(value) || value < 0 || value > maxPoints) {
+                        isValid = false;
+                        $(this).addClass('is-invalid');
+                    } else {
+                        $(this).removeClass('is-invalid');
+                        totalPartB += value;
+                    }
+                });
+                
+                // Validate internal marks
+                const internalMarksValue = parseInt($('#internalMarks').val());
+                const maxInternalMarks = @Model.Exam.InternalMarks;
+                if (isNaN(internalMarksValue) || internalMarksValue < 0 || internalMarksValue > maxInternalMarks) {
+                    isValid = false;
+                    $('#internalMarks').addClass('is-invalid');
+                } else {
+                    $('#internalMarks').removeClass('is-invalid');
+                    internalScore = internalMarksValue;
+                }
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Please ensure all grades and internal marks are valid numbers within the allowed range.');
+                    return false;
+                }
+                
+                // Confirm submission
+                const totalScore = partAScore + totalPartB + internalScore;
+                const totalMarks = @Model.Exam.TotalMarks;
+                const percentage = (totalScore / totalMarks * 100).toFixed(1);
+                const passingPercentage = @Model.Exam.PassingPercentage;
+                const status = percentage >= passingPercentage ? 'PASS' : 'FAIL';
+                
+                const confirmMessage = `Are you sure you want to submit these grades?\n\n` +
+                    `Part A: ${partAScore} points\n` +
+                    `Part B: ${totalPartB} points\n` +
+                    `Internal: ${internalScore} points\n` +
+                    `Total: ${totalScore}/${totalMarks} (${percentage}%)\n` +
+                    `Status: ${status}\n\n` +
+                    `Results will be published immediately and cannot be changed.`;
+                
+                if (!confirm(confirmMessage)) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Show loading state
+                const submitBtn = $('#submitGrades');
+                submitBtn.prop('disabled', true);
+                submitBtn.html('<i class="fas fa-spinner fa-spin me-2"></i>Submitting...');
+                
+                // Allow form to submit
+                return true;
+            });
+        });
+    </script>
+}

@@ -1,0 +1,350 @@
+@{
+    ViewData["Title"] = "Contact Support - EasyLearn";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h4 class="mb-0 text-primary">
+                                <i class="fas fa-headset me-2"></i>Contact Support
+                            </h4>
+                            <p class="text-sm mb-0">Get help from our support team</p>
+                        </div>
+                        <div class="ms-auto">
+                            <a href="/help" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Help
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Support Options -->
+                    <div class="row mb-5">
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100 text-center border-primary">
+                                <div class="card-body">
+                                    <i class="fas fa-envelope fa-3x text-primary mb-3"></i>
+                                    <h5>Email Support</h5>
+                                    <p class="text-muted">Send us an email and we'll respond within 24 hours</p>
+                                    <a href="mailto:support@easylearn.com" class="btn btn-primary">
+                                        <i class="fas fa-envelope me-1"></i>support@easylearn.com
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100 text-center border-success">
+                                <div class="card-body">
+                                    <i class="fas fa-phone fa-3x text-success mb-3"></i>
+                                    <h5>Phone Support</h5>
+                                    <p class="text-muted">Call us during business hours for immediate assistance</p>
+                                    <a href="tel:+911234567890" class="btn btn-success">
+                                        <i class="fas fa-phone me-1"></i>+91 12345 67890
+                                    </a>
+                                    <small class="d-block mt-2 text-muted">Mon-Fri: 9 AM - 6 PM IST</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100 text-center border-info">
+                                <div class="card-body">
+                                    <i class="fas fa-comments fa-3x text-info mb-3"></i>
+                                    <h5>Live Chat</h5>
+                                    <p class="text-muted">Chat with our support team in real-time</p>
+                                    <button class="btn btn-info" onclick="startLiveChat()">
+                                        <i class="fas fa-comments me-1"></i>Start Chat
+                                    </button>
+                                    <small class="d-block mt-2 text-muted">Available 24/7</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="row">
+                        <div class="col-lg-8 mx-auto">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-paper-plane me-2"></i>Send us a Message
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="contactForm">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group mb-3">
+                                                    <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" id="name" name="name" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group mb-3">
+                                                    <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
+                                                    <input type="email" class="form-control" id="email" name="email" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group mb-3">
+                                                    <label for="phone" class="form-label">Phone Number</label>
+                                                    <input type="tel" class="form-control" id="phone" name="phone">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group mb-3">
+                                                    <label for="category" class="form-label">Issue Category <span class="text-danger">*</span></label>
+                                                    <select class="form-control" id="category" name="category" required>
+                                                        <option value="">Select Category</option>
+                                                        <option value="account">Account Issues</option>
+                                                        <option value="course">Course Related</option>
+                                                        <option value="exam">Exam Issues</option>
+                                                        <option value="payment">Payment Problems</option>
+                                                        <option value="technical">Technical Support</option>
+                                                        <option value="certificate">Certificate Issues</option>
+                                                        <option value="other">Other</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="subject" name="subject" required>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label for="message" class="form-label">Message <span class="text-danger">*</span></label>
+                                            <textarea class="form-control" id="message" name="message" rows="5" required placeholder="Please describe your issue in detail..."></textarea>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label for="priority" class="form-label">Priority Level</label>
+                                            <select class="form-control" id="priority" name="priority">
+                                                <option value="low">Low - General inquiry</option>
+                                                <option value="medium" selected>Medium - Standard support</option>
+                                                <option value="high">High - Urgent issue</option>
+                                                <option value="critical">Critical - System down</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary btn-lg">
+                                                <i class="fas fa-paper-plane me-2"></i>Send Message
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Support Information -->
+                    <div class="row mt-5">
+                        <div class="col-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="text-center mb-4">
+                                        <i class="fas fa-info-circle me-2"></i>Support Information
+                                    </h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6>Response Times</h6>
+                                            <ul class="list-unstyled">
+                                                <li><i class="fas fa-clock text-success me-2"></i><strong>Critical:</strong> Within 2 hours</li>
+                                                <li><i class="fas fa-clock text-warning me-2"></i><strong>High:</strong> Within 4 hours</li>
+                                                <li><i class="fas fa-clock text-info me-2"></i><strong>Medium:</strong> Within 24 hours</li>
+                                                <li><i class="fas fa-clock text-secondary me-2"></i><strong>Low:</strong> Within 48 hours</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>Before Contacting Support</h6>
+                                            <ul class="list-unstyled">
+                                                <li><i class="fas fa-check text-success me-2"></i>Check our <a href="/help/faq">FAQ section</a></li>
+                                                <li><i class="fas fa-check text-success me-2"></i>Try refreshing your browser</li>
+                                                <li><i class="fas fa-check text-success me-2"></i>Clear browser cache and cookies</li>
+                                                <li><i class="fas fa-check text-success me-2"></i>Check your internet connection</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Common Issues -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5 class="mb-3">
+                                <i class="fas fa-tools me-2"></i>Common Issues & Quick Fixes
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-warning">
+                                        <div class="card-body">
+                                            <h6 class="text-warning">
+                                                <i class="fas fa-video me-2"></i>Videos Not Playing
+                                            </h6>
+                                            <ul class="small mb-0">
+                                                <li>Check internet connection</li>
+                                                <li>Try a different browser</li>
+                                                <li>Disable ad blockers</li>
+                                                <li>Clear browser cache</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-danger">
+                                        <div class="card-body">
+                                            <h6 class="text-danger">
+                                                <i class="fas fa-lock me-2"></i>Login Problems
+                                            </h6>
+                                            <ul class="small mb-0">
+                                                <li>Check email and password</li>
+                                                <li>Use "Forgot Password" if needed</li>
+                                                <li>Try social login options</li>
+                                                <li>Contact admin for role issues</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-info">
+                                        <div class="card-body">
+                                            <h6 class="text-info">
+                                                <i class="fas fa-credit-card me-2"></i>Payment Issues
+                                            </h6>
+                                            <ul class="small mb-0">
+                                                <li>Try different payment method</li>
+                                                <li>Check card details and limits</li>
+                                                <li>Ensure sufficient balance</li>
+                                                <li>Contact your bank if needed</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-success">
+                                        <div class="card-body">
+                                            <h6 class="text-success">
+                                                <i class="fas fa-certificate me-2"></i>Certificate Problems
+                                            </h6>
+                                            <ul class="small mb-0">
+                                                <li>Complete course 100%</li>
+                                                <li>Complete certificate payment</li>
+                                                <li>Wait for processing time</li>
+                                                <li>Check download permissions</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function startLiveChat() {
+            // Simulate live chat functionality
+            alert('Live chat feature will be available soon! Please use email or phone support for immediate assistance.');
+        }
+
+        $(document).ready(function() {
+            $('#contactForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                // Simulate form submission
+                var formData = {
+                    name: $('#name').val(),
+                    email: $('#email').val(),
+                    phone: $('#phone').val(),
+                    category: $('#category').val(),
+                    subject: $('#subject').val(),
+                    message: $('#message').val(),
+                    priority: $('#priority').val()
+                };
+                
+                // Show loading state
+                var submitBtn = $(this).find('button[type="submit"]');
+                var originalText = submitBtn.html();
+                submitBtn.html('<i class="fas fa-spinner fa-spin me-2"></i>Sending...').prop('disabled', true);
+                
+                // Simulate API call
+                setTimeout(function() {
+                    // Show success message
+                    $('#contactForm').html(`
+                        <div class="text-center py-5">
+                            <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                            <h4 class="text-success">Message Sent Successfully!</h4>
+                            <p class="text-muted">Thank you for contacting us. We'll respond to your inquiry within 24 hours.</p>
+                            <p class="small text-muted">Reference ID: #SUP${Date.now()}</p>
+                            <a href="/help" class="btn btn-primary mt-3">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Help Center
+                            </a>
+                        </div>
+                    `);
+                }, 2000);
+            });
+
+            // Auto-populate user info if logged in
+            // This would be populated from server-side data in a real implementation
+            if (typeof currentUser !== 'undefined') {
+                $('#name').val(currentUser.name);
+                $('#email').val(currentUser.email);
+                $('#phone').val(currentUser.phone);
+            }
+        });
+    </script>
+}
+
+<style>
+    .card:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s ease-in-out;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .border-primary {
+        border-color: #007bff !important;
+    }
+    
+    .border-success {
+        border-color: #28a745 !important;
+    }
+    
+    .border-info {
+        border-color: #17a2b8 !important;
+    }
+    
+    .border-warning {
+        border-color: #ffc107 !important;
+    }
+    
+    .border-danger {
+        border-color: #dc3545 !important;
+    }
+    
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    .btn-lg {
+        padding: 12px 30px;
+        font-size: 1.1rem;
+    }
+</style>

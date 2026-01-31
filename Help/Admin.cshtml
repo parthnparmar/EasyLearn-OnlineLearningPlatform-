@@ -1,0 +1,509 @@
+@{
+    ViewData["Title"] = "Admin Help Guide - EasyLearn";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h4 class="mb-0 text-warning">
+                                <i class="fas fa-user-shield me-2"></i>Admin Help Guide
+                            </h4>
+                            <p class="text-sm mb-0">Complete guide for administrators managing EasyLearn</p>
+                        </div>
+                        <div class="ms-auto">
+                            <a href="/help" class="btn btn-outline-warning btn-sm">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Help
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Quick Navigation -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="text-warning mb-3">Quick Navigation</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled">
+                                                <li><a href="#dashboard" class="text-decoration-none">1. Admin Dashboard</a></li>
+                                                <li><a href="#user-management" class="text-decoration-none">2. User Management</a></li>
+                                                <li><a href="#course-approval" class="text-decoration-none">3. Course Approval</a></li>
+                                                <li><a href="#exam-approval" class="text-decoration-none">4. Exam Approval</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled">
+                                                <li><a href="#categories" class="text-decoration-none">5. Category Management</a></li>
+                                                <li><a href="#announcements" class="text-decoration-none">6. Announcements</a></li>
+                                                <li><a href="#analytics" class="text-decoration-none">7. System Analytics</a></li>
+                                                <li><a href="#maintenance" class="text-decoration-none">8. System Maintenance</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Admin Dashboard -->
+                    <div id="dashboard" class="mb-5">
+                        <h5 class="text-warning mb-3">
+                            <i class="fas fa-tachometer-alt me-2"></i>1. Admin Dashboard
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Dashboard Overview</h6>
+                                <p>The admin dashboard provides a comprehensive view of the platform:</p>
+                                <ul>
+                                    <li><strong>User Statistics:</strong> Total users by role (Students, Instructors, Admins)</li>
+                                    <li><strong>Course Statistics:</strong> Total courses, pending approvals, active courses</li>
+                                    <li><strong>Exam Statistics:</strong> Total exams, pending approvals, completed exams</li>
+                                    <li><strong>System Health:</strong> Platform performance metrics</li>
+                                </ul>
+
+                                <h6 class="mt-4">Key Metrics</h6>
+                                <ul>
+                                    <li><strong>Daily Active Users:</strong> Users who logged in today</li>
+                                    <li><strong>Course Completion Rate:</strong> Percentage of completed enrollments</li>
+                                    <li><strong>Certificate Generation:</strong> Certificates issued this month</li>
+                                    <li><strong>Revenue Tracking:</strong> Payment statistics and trends</li>
+                                </ul>
+
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Dashboard Updates:</strong> Statistics are updated in real-time and refresh automatically.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Management -->
+                    <div id="user-management" class="mb-5">
+                        <h5 class="text-warning mb-3">
+                            <i class="fas fa-users-cog me-2"></i>2. User Management
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Managing Users</h6>
+                                <ol>
+                                    <li>Go to "Manage Users" from admin menu</li>
+                                    <li>View all registered users with their roles</li>
+                                    <li>Filter users by role, status, or registration date</li>
+                                    <li>Search users by name or email</li>
+                                </ol>
+
+                                <h6 class="mt-4">User Actions</h6>
+                                <ul>
+                                    <li><strong>Role Assignment:</strong> Change user roles (Student ↔ Instructor ↔ Admin)</li>
+                                    <li><strong>Account Status:</strong> Activate/Deactivate user accounts</li>
+                                    <li><strong>Profile Management:</strong> View and edit user profiles</li>
+                                    <li><strong>Login History:</strong> Track user login activities</li>
+                                </ul>
+
+                                <h6 class="mt-4">Role Management</h6>
+                                <ul>
+                                    <li><strong>Student Role:</strong> Default role for new registrations</li>
+                                    <li><strong>Instructor Role:</strong> Manually assigned by admin</li>
+                                    <li><strong>Admin Role:</strong> Full platform access (assign carefully)</li>
+                                </ul>
+
+                                <h6 class="mt-4">Bulk Operations</h6>
+                                <ul>
+                                    <li>Export user data to CSV</li>
+                                    <li>Bulk role assignments</li>
+                                    <li>Mass email notifications</li>
+                                    <li>Account status updates</li>
+                                </ul>
+
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <strong>Security:</strong> Admin role should only be assigned to trusted personnel.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Course Approval -->
+                    <div id="course-approval" class="mb-5">
+                        <h5 class="text-warning mb-3">
+                            <i class="fas fa-check-circle me-2"></i>3. Course Approval System
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Course Approval Process</h6>
+                                <ol>
+                                    <li>Go to "Approve Courses" from admin menu</li>
+                                    <li>Review pending course submissions</li>
+                                    <li>Check course details:
+                                        <ul>
+                                            <li>Course title and description</li>
+                                            <li>Instructor credentials</li>
+                                            <li>Content quality and structure</li>
+                                            <li>Learning objectives</li>
+                                        </ul>
+                                    </li>
+                                    <li>Approve or reject with feedback</li>
+                                </ol>
+
+                                <h6 class="mt-4">Approval Criteria</h6>
+                                <ul>
+                                    <li><strong>Content Quality:</strong> Accurate, relevant, and well-structured</li>
+                                    <li><strong>Educational Value:</strong> Clear learning outcomes</li>
+                                    <li><strong>Technical Standards:</strong> Proper formatting and media quality</li>
+                                    <li><strong>Compliance:</strong> Adherence to platform guidelines</li>
+                                </ul>
+
+                                <h6 class="mt-4">Course Management</h6>
+                                <ul>
+                                    <li><strong>Active Courses:</strong> Monitor live courses</li>
+                                    <li><strong>Course Analytics:</strong> Track enrollment and completion</li>
+                                    <li><strong>Quality Control:</strong> Regular content reviews</li>
+                                    <li><strong>Instructor Support:</strong> Provide feedback and guidance</li>
+                                </ul>
+
+                                <div class="alert alert-success">
+                                    <i class="fas fa-lightbulb me-2"></i>
+                                    <strong>Best Practice:</strong> Provide constructive feedback for rejected courses to help instructors improve.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exam Approval -->
+                    <div id="exam-approval" class="mb-5">
+                        <h5 class="text-warning mb-3">
+                            <i class="fas fa-clipboard-check me-2"></i>4. Exam Approval System
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Exam Approval Process</h6>
+                                <ol>
+                                    <li>Go to "Approve Exams" from admin menu</li>
+                                    <li>Review pending exam submissions</li>
+                                    <li>Verify exam structure:
+                                        <ul>
+                                            <li>Part A questions (MCQs)</li>
+                                            <li>Part B questions (Written)</li>
+                                            <li>Marking scheme</li>
+                                            <li>Time allocation</li>
+                                        </ul>
+                                    </li>
+                                    <li>Check question quality and difficulty</li>
+                                    <li>Approve or request modifications</li>
+                                </ol>
+
+                                <h6 class="mt-4">Exam Standards</h6>
+                                <ul>
+                                    <li><strong>Question Quality:</strong> Clear, unambiguous questions</li>
+                                    <li><strong>Difficulty Balance:</strong> Mix of easy, medium, and hard questions</li>
+                                    <li><strong>Content Coverage:</strong> Comprehensive course material coverage</li>
+                                    <li><strong>Time Management:</strong> Appropriate time limits</li>
+                                </ul>
+
+                                <h6 class="mt-4">Exam Monitoring</h6>
+                                <ul>
+                                    <li>Track exam schedules and assignments</li>
+                                    <li>Monitor exam completion rates</li>
+                                    <li>Review pass/fail statistics</li>
+                                    <li>Handle exam-related issues</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category Management -->
+                    <div id="categories" class="mb-5">
+                        <h5 class="text-warning mb-3">
+                            <i class="fas fa-tags me-2"></i>5. Category Management
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Managing Course Categories</h6>
+                                <ol>
+                                    <li>Go to "Manage Categories" from admin menu</li>
+                                    <li>View existing categories</li>
+                                    <li>Add new categories:
+                                        <ul>
+                                            <li>Category name</li>
+                                            <li>Description</li>
+                                            <li>Icon/Image (optional)</li>
+                                            <li>Display order</li>
+                                        </ul>
+                                    </li>
+                                    <li>Edit or deactivate categories</li>
+                                </ol>
+
+                                <h6 class="mt-4">Category Guidelines</h6>
+                                <ul>
+                                    <li><strong>Clear Names:</strong> Use descriptive, professional names</li>
+                                    <li><strong>Logical Grouping:</strong> Group related subjects together</li>
+                                    <li><strong>Avoid Overlap:</strong> Minimize category overlap</li>
+                                    <li><strong>Future Planning:</strong> Consider scalability</li>
+                                </ul>
+
+                                <h6 class="mt-4">Default Categories</h6>
+                                <ul>
+                                    <li><strong>Programming:</strong> Software development courses</li>
+                                    <li><strong>Design:</strong> UI/UX and graphic design</li>
+                                    <li><strong>Business:</strong> Management and entrepreneurship</li>
+                                    <li><strong>Marketing:</strong> Digital marketing and sales</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Announcements -->
+                    <div id="announcements" class="mb-5">
+                        <h5 class="text-warning mb-3">
+                            <i class="fas fa-bullhorn me-2"></i>6. Announcements
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Creating Announcements</h6>
+                                <ol>
+                                    <li>Go to "Manage Announcements"</li>
+                                    <li>Click "Create New Announcement"</li>
+                                    <li>Fill in announcement details:
+                                        <ul>
+                                            <li><strong>Title:</strong> Clear, attention-grabbing title</li>
+                                            <li><strong>Content:</strong> Detailed announcement message</li>
+                                            <li><strong>Priority:</strong> High, Medium, or Low</li>
+                                            <li><strong>Target Audience:</strong> All users, Students, or Instructors</li>
+                                            <li><strong>Expiry Date:</strong> When announcement should stop showing</li>
+                                        </ul>
+                                    </li>
+                                    <li>Publish or schedule for later</li>
+                                </ol>
+
+                                <h6 class="mt-4">Announcement Types</h6>
+                                <ul>
+                                    <li><strong>System Updates:</strong> Platform changes and new features</li>
+                                    <li><strong>Maintenance:</strong> Scheduled downtime notifications</li>
+                                    <li><strong>Policy Changes:</strong> Terms of service updates</li>
+                                    <li><strong>Events:</strong> Webinars, contests, or special programs</li>
+                                </ul>
+
+                                <h6 class="mt-4">Best Practices</h6>
+                                <ul>
+                                    <li>Keep announcements concise and clear</li>
+                                    <li>Use appropriate priority levels</li>
+                                    <li>Set reasonable expiry dates</li>
+                                    <li>Target specific audiences when relevant</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Analytics -->
+                    <div id="analytics" class="mb-5">
+                        <h5 class="text-warning mb-3">
+                            <i class="fas fa-chart-line me-2"></i>7. System Analytics
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Platform Analytics</h6>
+                                <ul>
+                                    <li><strong>User Analytics:</strong>
+                                        <ul>
+                                            <li>Registration trends</li>
+                                            <li>User activity patterns</li>
+                                            <li>Role distribution</li>
+                                            <li>Geographic distribution</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Course Analytics:</strong>
+                                        <ul>
+                                            <li>Popular courses and categories</li>
+                                            <li>Enrollment trends</li>
+                                            <li>Completion rates</li>
+                                            <li>Instructor performance</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Exam Analytics:</strong>
+                                        <ul>
+                                            <li>Exam participation rates</li>
+                                            <li>Pass/fail statistics</li>
+                                            <li>Average scores by course</li>
+                                            <li>Certificate generation trends</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+
+                                <h6 class="mt-4">Financial Analytics</h6>
+                                <ul>
+                                    <li>Certificate payment revenue</li>
+                                    <li>Re-exam fee collections</li>
+                                    <li>Payment method preferences</li>
+                                    <li>Revenue trends and forecasting</li>
+                                </ul>
+
+                                <h6 class="mt-4">Data Export</h6>
+                                <ul>
+                                    <li><strong>User Data:</strong> Export user lists and statistics</li>
+                                    <li><strong>Course Data:</strong> Export course information and analytics</li>
+                                    <li><strong>Financial Reports:</strong> Export payment and revenue data</li>
+                                    <li><strong>Custom Reports:</strong> Generate specific data exports</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Maintenance -->
+                    <div id="maintenance" class="mb-5">
+                        <h5 class="text-warning mb-3">
+                            <i class="fas fa-tools me-2"></i>8. System Maintenance
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Regular Maintenance Tasks</h6>
+                                <ul>
+                                    <li><strong>Database Cleanup:</strong>
+                                        <ul>
+                                            <li>Remove expired certificates</li>
+                                            <li>Clean up old login entries</li>
+                                            <li>Archive completed courses</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Content Review:</strong>
+                                        <ul>
+                                            <li>Check for broken video links</li>
+                                            <li>Verify download links</li>
+                                            <li>Update outdated content</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Security Monitoring:</strong>
+                                        <ul>
+                                            <li>Review user activities</li>
+                                            <li>Monitor failed login attempts</li>
+                                            <li>Check for suspicious activities</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+
+                                <h6 class="mt-4">System Health Monitoring</h6>
+                                <ul>
+                                    <li>Server performance metrics</li>
+                                    <li>Database performance</li>
+                                    <li>Application error logs</li>
+                                    <li>User experience metrics</li>
+                                </ul>
+
+                                <h6 class="mt-4">Backup and Recovery</h6>
+                                <ul>
+                                    <li>Regular database backups</li>
+                                    <li>File system backups</li>
+                                    <li>Disaster recovery procedures</li>
+                                    <li>Data integrity checks</li>
+                                </ul>
+
+                                <div class="alert alert-danger">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <strong>Critical:</strong> Always test backup and recovery procedures regularly.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Admin Best Practices -->
+                    <div class="mb-5">
+                        <h5 class="text-warning mb-3">
+                            <i class="fas fa-shield-alt me-2"></i>Admin Best Practices
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>Security Practices</h6>
+                                        <ul>
+                                            <li>Use strong, unique passwords</li>
+                                            <li>Enable two-factor authentication</li>
+                                            <li>Regularly review user permissions</li>
+                                            <li>Monitor system logs</li>
+                                            <li>Keep software updated</li>
+                                        </ul>
+
+                                        <h6 class="mt-4">User Management</h6>
+                                        <ul>
+                                            <li>Respond to user issues promptly</li>
+                                            <li>Maintain clear communication</li>
+                                            <li>Document policy decisions</li>
+                                            <li>Provide user training resources</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>Quality Assurance</h6>
+                                        <ul>
+                                            <li>Review content before approval</li>
+                                            <li>Test new features thoroughly</li>
+                                            <li>Maintain content standards</li>
+                                            <li>Gather user feedback regularly</li>
+                                            <li>Monitor platform performance</li>
+                                        </ul>
+
+                                        <h6 class="mt-4">Documentation</h6>
+                                        <ul>
+                                            <li>Keep admin procedures documented</li>
+                                            <li>Maintain change logs</li>
+                                            <li>Document troubleshooting steps</li>
+                                            <li>Create user guides and FAQs</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Support -->
+                    <div class="text-center">
+                        <div class="card bg-gradient-warning text-dark">
+                            <div class="card-body">
+                                <h5>Admin Support</h5>
+                                <p class="mb-3">Need technical assistance or have questions about platform administration?</p>
+                                <a href="/help/contact" class="btn btn-dark">
+                                    <i class="fas fa-envelope me-1"></i>Contact Technical Support
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card.bg-gradient-warning {
+        background: linear-gradient(45deg, #ffc107, #e0a800) !important;
+    }
+    
+    h5 {
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 10px;
+    }
+    
+    .alert {
+        border-left: 4px solid;
+    }
+    
+    .alert-info {
+        border-left-color: #17a2b8;
+    }
+    
+    .alert-success {
+        border-left-color: #28a745;
+    }
+    
+    .alert-warning {
+        border-left-color: #ffc107;
+    }
+    
+    .alert-danger {
+        border-left-color: #dc3545;
+    }
+</style>

@@ -1,0 +1,247 @@
+@model EasyLearn.Models.ViewModels.PuzzleResultViewModel
+@{
+    ViewData["Title"] = "Game Results - " + Model.Game.Title;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center mb-4">
+                <h2 class="mb-3">🎮 Game Results</h2>
+                <h4 class="text-muted">@Model.Game.Title</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Results Card -->
+            <div class="card result-card">
+                <div class="card-header text-center @GetHeaderClass(Model.Attempt.Status)">
+                    <div class="result-icon mb-3">
+                        @switch (Model.Attempt.Status)
+                        {
+                            case EasyLearn.Models.GameStatus.Completed:
+                                <i class="fas fa-trophy fa-4x text-warning"></i>
+                                break;
+                            case EasyLearn.Models.GameStatus.AutoSolved:
+                                <i class="fas fa-robot fa-4x text-info"></i>
+                                break;
+                            default:
+                                <i class="fas fa-times-circle fa-4x text-danger"></i>
+                                break;
+                        }
+                    </div>
+                    <h3 class="text-white mb-0">@Model.PerformanceMessage</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Score and Stats -->
+                    <div class="row text-center mb-4">
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="stat-item">
+                                <h2 class="text-primary mb-1">@Model.Attempt.Score</h2>
+                                <small class="text-muted">Final Score</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="stat-item">
+                                <h2 class="text-success mb-1">@TimeSpan.FromSeconds(Model.Attempt.TimeTakenSeconds).ToString(@"mm\:ss")</h2>
+                                <small class="text-muted">Time Taken</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="stat-item">
+                                <h2 class="text-info mb-1">@Model.Attempt.MovesCount</h2>
+                                <small class="text-muted">Moves Made</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="stat-item">
+                                <h2 class="text-warning mb-1">@Model.Attempt.HintsUsed</h2>
+                                <small class="text-muted">Hints Used</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Analysis -->
+                    <div class="performance-analysis mb-4">
+                        <h5 class="mb-3"><i class="fas fa-chart-line"></i> Performance Analysis</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="progress mb-2">
+                                    <div class="progress-bar @GetProgressBarClass(Model.Attempt.Score, Model.Game.MaxScore)" 
+                                         role="progressbar" 
+                                         style="width: @GetScorePercentage(Model.Attempt.Score, Model.Game.MaxScore)%">
+                                        @GetScorePercentage(Model.Attempt.Score, Model.Game.MaxScore)%
+                                    </div>
+                                </div>
+                                <small class="text-muted">Score: @Model.Attempt.Score / @Model.Game.MaxScore</small>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="performance-badges">
+                                    @if (Model.Attempt.Score >= Model.Game.MaxScore * 0.9)
+                                    {
+                                        <span class="badge bg-success me-1">🌟 Excellent</span>
+                                    }
+                                    else if (Model.Attempt.Score >= Model.Game.MaxScore * 0.7)
+                                    {
+                                        <span class="badge bg-primary me-1">👍 Great</span>
+                                    }
+                                    else if (Model.Attempt.Score >= Model.Game.MaxScore * 0.5)
+                                    {
+                                        <span class="badge bg-warning me-1">👌 Good</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary me-1">💪 Keep Trying</span>
+                                    }
+
+                                    @if (Model.Attempt.HintsUsed == 0)
+                                    {
+                                        <span class="badge bg-info me-1">🧠 No Hints</span>
+                                    }
+
+                                    @if (Model.Attempt.TimeTakenSeconds < 60)
+                                    {
+                                        <span class="badge bg-danger me-1">⚡ Speed Demon</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Game Details -->
+                    <div class="game-details mb-4">
+                        <h5 class="mb-3"><i class="fas fa-info-circle"></i> Game Details</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li><strong>Game Type:</strong> @Model.Game.Type</li>
+                                    <li><strong>Difficulty:</strong> <span class="badge badge-difficulty-@Model.Game.Difficulty.ToString().ToLower()">@Model.Game.Difficulty</span></li>
+                                    <li><strong>Max Score:</strong> @Model.Game.MaxScore points</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li><strong>Started:</strong> @Model.Attempt.StartedAt.ToString("MMM dd, yyyy HH:mm")</li>
+                                    <li><strong>Completed:</strong> @(Model.Attempt.CompletedAt?.ToString("MMM dd, yyyy HH:mm") ?? "Not completed")</li>
+                                    <li><strong>Status:</strong> <span class="badge @GetStatusBadgeClass(Model.Attempt.Status)">@Model.Attempt.Status</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="text-center">
+                        <div class="btn-group" role="group">
+                            <a href="@Url.Action("Play", new { gameId = Model.Game.Id })" class="btn btn-primary">
+                                <i class="fas fa-redo"></i> Play Again
+                            </a>
+                            <a href="@Url.Action("Index")" class="btn btn-success">
+                                <i class="fas fa-gamepad"></i> More Games
+                            </a>
+                            <a href="@Url.Action(Model.Game.Type.ToString())" class="btn btn-info">
+                                <i class="fas fa-list"></i> More @Model.Game.Type Games
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievements Section -->
+    @if (Model.Attempt.Status == EasyLearn.Models.GameStatus.Completed)
+    {
+        <div class="row justify-content-center mt-4">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="fas fa-medal"></i> Achievements Unlocked</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            @if (Model.Attempt.Score >= Model.Game.MaxScore * 0.9)
+                            {
+                                <div class="col-md-4 mb-3">
+                                    <div class="achievement-badge">
+                                        <i class="fas fa-star fa-2x text-warning mb-2"></i>
+                                        <h6>Perfect Score</h6>
+                                        <small class="text-muted">Scored 90% or higher</small>
+                                    </div>
+                                </div>
+                            }
+                            @if (Model.Attempt.HintsUsed == 0)
+                            {
+                                <div class="col-md-4 mb-3">
+                                    <div class="achievement-badge">
+                                        <i class="fas fa-brain fa-2x text-info mb-2"></i>
+                                        <h6>Brain Power</h6>
+                                        <small class="text-muted">Completed without hints</small>
+                                    </div>
+                                </div>
+                            }
+                            @if (Model.Attempt.TimeTakenSeconds < 120)
+                            {
+                                <div class="col-md-4 mb-3">
+                                    <div class="achievement-badge">
+                                        <i class="fas fa-bolt fa-2x text-danger mb-2"></i>
+                                        <h6>Speed Runner</h6>
+                                        <small class="text-muted">Completed in under 2 minutes</small>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@functions {
+    private string GetHeaderClass(EasyLearn.Models.GameStatus status)
+    {
+        return status switch
+        {
+            EasyLearn.Models.GameStatus.Completed => "bg-success text-white",
+            EasyLearn.Models.GameStatus.AutoSolved => "bg-info text-white",
+            _ => "bg-danger text-white"
+        };
+    }
+
+    private string GetProgressBarClass(int score, int maxScore)
+    {
+        var percentage = (double)score / maxScore * 100;
+        return percentage switch
+        {
+            >= 90 => "bg-success",
+            >= 70 => "bg-primary",
+            >= 50 => "bg-warning",
+            _ => "bg-danger"
+        };
+    }
+
+    private int GetScorePercentage(int score, int maxScore)
+    {
+        return maxScore > 0 ? (int)Math.Round((double)score / maxScore * 100) : 0;
+    }
+
+    private string GetStatusBadgeClass(EasyLearn.Models.GameStatus status)
+    {
+        return status switch
+        {
+            EasyLearn.Models.GameStatus.Completed => "bg-success",
+            EasyLearn.Models.GameStatus.AutoSolved => "bg-info",
+            EasyLearn.Models.GameStatus.Abandoned => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+}
+
+@section Scripts {
+    <link rel="stylesheet" href="~/css/brain-games.css" />
+    <style>
+        /* Additional styles specific to this view */
+    </style>
+}

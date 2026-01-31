@@ -1,0 +1,282 @@
+@model EasyLearn.Models.ViewModels.PuzzleDashboardViewModel
+@{
+    ViewData["Title"] = "Brain Games & Puzzles";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-0">🧠 Brain Games & Puzzles</h2>
+                    <p class="text-muted mb-0">Challenge your mind with our collection of brain training games</p>
+                </div>
+                <div>
+                    <a href="@Url.Action("Stats", "Puzzle")" class="btn btn-outline-primary">
+                        <i class="fas fa-chart-bar"></i> My Stats
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Stats Overview -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-gradient-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0 text-white">@Model.UserStats.TotalGamesPlayed</h3>
+                            <p class="mb-0 text-white">Games Played</p>
+                        </div>
+                        <div class="opacity-75">
+                            <i class="fas fa-gamepad fa-2x text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-gradient-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0 text-white">@Model.UserStats.TotalGamesCompleted</h3>
+                            <p class="mb-0 text-white">Completed</p>
+                        </div>
+                        <div class="opacity-75">
+                            <i class="fas fa-trophy fa-2x text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-gradient-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0 text-white">@Model.UserStats.AverageScore</h3>
+                            <p class="mb-0 text-white">Average Score</p>
+                        </div>
+                        <div class="opacity-75">
+                            <i class="fas fa-star fa-2x text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-gradient-warning text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0 text-white">@TimeSpan.FromSeconds(Model.UserStats.TotalTimePlayed).ToString(@"hh\:mm")</h3>
+                            <p class="mb-0 text-white">Time Played</p>
+                        </div>
+                        <div class="opacity-75">
+                            <i class="fas fa-clock fa-2x text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Categories -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-puzzle-piece"></i> Game Categories</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Sudoku -->
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card game-category-card h-100">
+                                <div class="card-body text-center">
+                                    <div class="game-icon mb-3">
+                                        <i class="fas fa-th fa-3x text-primary"></i>
+                                    </div>
+                                    <h5 class="card-title">Sudoku</h5>
+                                    <p class="text-muted small">Number placement puzzles</p>
+                                    <div class="mb-3">
+                                        <span class="badge bg-success me-1">Easy</span>
+                                        <span class="badge bg-warning me-1">Medium</span>
+                                        <span class="badge bg-danger">Hard</span>
+                                    </div>
+                                    <a href="@Url.Action("Sudoku", "BrainGames")" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-play"></i> Play Sudoku
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Memory Games -->
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card game-category-card h-100">
+                                <div class="card-body text-center">
+                                    <div class="game-icon mb-3">
+                                        <i class="fas fa-brain fa-3x text-success"></i>
+                                    </div>
+                                    <h5 class="card-title">Memory Games</h5>
+                                    <p class="text-muted small">Test your memory skills</p>
+                                    <div class="mb-3">
+                                        <span class="badge bg-success me-1">Colors</span>
+                                        <span class="badge bg-warning me-1">Animals</span>
+                                        <span class="badge bg-danger">Patterns</span>
+                                    </div>
+                                    <a href="@Url.Action("Memory", "BrainGames")" class="btn btn-success btn-sm">
+                                        <i class="fas fa-play"></i> Play Memory
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Math Games -->
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card game-category-card h-100">
+                                <div class="card-body text-center">
+                                    <div class="game-icon mb-3">
+                                        <i class="fas fa-calculator fa-3x text-info"></i>
+                                    </div>
+                                    <h5 class="card-title">Math Puzzles</h5>
+                                    <p class="text-muted small">Number sequences & patterns</p>
+                                    <div class="mb-3">
+                                        <span class="badge bg-success me-1">Sequences</span>
+                                        <span class="badge bg-warning me-1">Fibonacci</span>
+                                        <span class="badge bg-danger">Primes</span>
+                                    </div>
+                                    <a href="@Url.Action("MathGames", "BrainGames")" class="btn btn-info btn-sm">
+                                        <i class="fas fa-play"></i> Play Math
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Word Games -->
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card game-category-card h-100">
+                                <div class="card-body text-center">
+                                    <div class="game-icon mb-3">
+                                        <i class="fas fa-font fa-3x text-warning"></i>
+                                    </div>
+                                    <h5 class="card-title">Word Games</h5>
+                                    <p class="text-muted small">Word puzzles & scrambles</p>
+                                    <div class="mb-3">
+                                        <span class="badge bg-success me-1">Animals</span>
+                                        <span class="badge bg-warning me-1">Tech</span>
+                                        <span class="badge bg-danger">Advanced</span>
+                                    </div>
+                                    <a href="@Url.Action("Word", "BrainGames")" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-play"></i> Play Words
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Logic Games -->
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card game-category-card h-100">
+                                <div class="card-body text-center">
+                                    <div class="game-icon mb-3">
+                                        <i class="fas fa-lightbulb fa-3x text-danger"></i>
+                                    </div>
+                                    <h5 class="card-title">Logic Puzzles</h5>
+                                    <p class="text-muted small">Critical thinking challenges</p>
+                                    <div class="mb-3">
+                                        <span class="badge bg-success me-1">Grid Logic</span>
+                                        <span class="badge bg-warning me-1">Hanoi</span>
+                                        <span class="badge bg-danger">Complex</span>
+                                    </div>
+                                    <a href="@Url.Action("Logic", "BrainGames")" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-play"></i> Play Logic
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Play -->
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card game-category-card h-100 border-primary">
+                                <div class="card-body text-center">
+                                    <div class="game-icon mb-3">
+                                        <i class="fas fa-bolt fa-3x text-primary"></i>
+                                    </div>
+                                    <h5 class="card-title text-primary">Quick Play</h5>
+                                    <p class="text-muted small">Random game selection</p>
+                                    <div class="mb-3">
+                                        <span class="badge bg-primary">Random</span>
+                                        <span class="badge bg-secondary">Mixed</span>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm" onclick="quickPlay()">
+                                        <i class="fas fa-random"></i> Random Game
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.game-category-card').hover(
+                function() { $(this).addClass('shadow-lg transform-scale'); },
+                function() { $(this).removeClass('shadow-lg transform-scale'); }
+            );
+        });
+
+        function quickPlay() {
+            const gameTypes = ['Sudoku', 'Memory', 'MathGames', 'Word', 'Logic'];
+            const randomType = gameTypes[Math.floor(Math.random() * gameTypes.length)];
+            window.location.href = '@Url.Action("", "BrainGames")' + randomType;
+        }
+    </script>
+
+    <style>
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        }
+        
+        .bg-gradient-success {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+        }
+        
+        .bg-gradient-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        }
+        
+        .bg-gradient-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        }
+        
+        .game-category-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .game-category-card:hover {
+            transform: translateY(-5px);
+            border-color: #007bff;
+        }
+        
+        .game-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .game-category-card:hover .game-icon {
+            transform: scale(1.1);
+        }
+        
+        .transform-scale {
+            transform: scale(1.02) translateY(-5px);
+        }
+    </style>
+}

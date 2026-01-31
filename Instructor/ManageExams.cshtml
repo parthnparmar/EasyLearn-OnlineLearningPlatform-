@@ -1,0 +1,159 @@
+@model List<EasyLearn.Models.Exam>
+@{
+    ViewData["Title"] = "Manage Exams";
+    var course = ViewBag.Course as EasyLearn.Models.Course;
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h5 class="mb-0">Manage Exams - @course?.Title</h5>
+                            <p class="text-sm mb-0">Course-specific exam management</p>
+                        </div>
+                        <div class="ms-auto">
+                            <a href="/instructor/create-exam/@course?.Id" class="btn bg-gradient-primary btn-sm mb-0">
+                                <i class="fas fa-plus"></i> Create Exam
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-0">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-flush" id="exams-table">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Exam Title</th>
+                                        <th>Date & Session</th>
+                                        <th>Status</th>
+                                        <th>Students</th>
+                                        <th>Attempts</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var exam in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="ms-3">
+                                                        <h6 class="mb-0 text-sm">@exam.Title</h6>
+                                                        <p class="text-xs text-secondary mb-0">@exam.Description</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="text-sm font-weight-bold">@exam.ScheduledStartTime.ToString("MMM dd, yyyy")</span><br>
+                                                <span class="text-xs text-secondary">@exam.ScheduledStartTime.ToString("hh:mm tt")</span>
+                                            </td>
+                                            <td>
+                                                @if (exam.IsApproved)
+                                                {
+                                                    <span class="badge badge-sm bg-gradient-success">Approved</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-sm bg-gradient-warning">Pending Approval</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="text-sm font-weight-bold">@course?.Enrollments.Count</span><br>
+                                                <span class="text-xs text-secondary">Enrolled Students</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-sm font-weight-bold">@exam.ExamAttempts.Count</span><br>
+                                                <span class="text-xs text-secondary">Total Attempts</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a href="/instructor/manage-exam-questions/@exam.Id" class="btn btn-link text-dark px-3 mb-0">
+                                                        <i class="fas fa-question-circle text-dark me-2"></i>Questions
+                                                    </a>
+                                                    <a href="/instructor/assign-exam-dates/@exam.Id" class="btn btn-link text-primary px-3 mb-0">
+                                                        <i class="fas fa-calendar-alt text-primary me-2"></i>Assign Dates
+                                                    </a>
+                                                    <a href="/instructor/exam-results/@exam.Id" class="btn btn-link text-dark px-3 mb-0">
+                                                        <i class="fas fa-chart-bar text-dark me-2"></i>Results
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-clipboard-list fa-3x text-secondary mb-3"></i>
+                            <h5 class="text-secondary">No Exams Created</h5>
+                            <p class="text-sm text-secondary">Create your first exam for this course</p>
+                            <a href="/instructor/create-exam/@course?.Id" class="btn bg-gradient-primary">
+                                <i class="fas fa-plus me-2"></i>Create Exam
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Information -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Course Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6>@course?.Title</h6>
+                            <p class="text-sm text-muted mb-2">@course?.Description</p>
+                            <small class="text-muted">
+                                <i class="fas fa-tag me-1"></i>@course?.Category.Name |
+                                <i class="fas fa-calendar me-1"></i>Created @course?.CreatedAt.ToString("MMM dd, yyyy")
+                            </small>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <h6 class="text-primary mb-0">@course?.Lessons.Count</h6>
+                                    <small class="text-muted">Lessons</small>
+                                </div>
+                                <div class="col-4">
+                                    <h6 class="text-info mb-0">@course?.Quizzes.Count</h6>
+                                    <small class="text-muted">Quizzes</small>
+                                </div>
+                                <div class="col-4">
+                                    <h6 class="text-success mb-0">@Model.Count</h6>
+                                    <small class="text-muted">Exams</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#exams-table').DataTable({
+                "pageLength": 10,
+                "ordering": true,
+                "info": false,
+                "lengthChange": false
+            });
+        });
+    </script>
+}

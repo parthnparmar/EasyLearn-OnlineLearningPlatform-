@@ -1,0 +1,133 @@
+@model IEnumerable<EasyLearn.Models.Game>
+@{
+    ViewData["Title"] = "Brain Training Games";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center mb-5">
+                <h1 class="display-4 text-primary">🧠 Brain Training Games</h1>
+                <p class="lead">Challenge your mind with our collection of educational games</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card game-card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="game-icon mb-3">🃏</div>
+                    <h5 class="card-title">Memory Card Matching</h5>
+                    <p class="card-text">Match pairs of cards to test your memory</p>
+                    <a href="@Url.Action("MemoryCardMatching")" class="btn btn-primary">Play Now</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card game-card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="game-icon mb-3">🔢</div>
+                    <h5 class="card-title">Pattern Memory</h5>
+                    <p class="card-text">Remember and repeat number patterns</p>
+                    <a href="@Url.Action("PatternMemory")" class="btn btn-primary">Play Now</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card game-card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="game-icon mb-3">🧮</div>
+                    <h5 class="card-title">Number Recall</h5>
+                    <p class="card-text">Memorize and recall number sequences</p>
+                    <a href="@Url.Action("NumberRecall")" class="btn btn-primary">Play Now</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card game-card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="game-icon mb-3">🖼️</div>
+                    <h5 class="card-title">Image Memory</h5>
+                    <p class="card-text">Remember image positions and details</p>
+                    <a href="@Url.Action("ImageMemory")" class="btn btn-primary">Play Now</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card game-card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="game-icon mb-3">🎯</div>
+                    <h5 class="card-title">Number Guessing</h5>
+                    <p class="card-text">Guess the secret number with clues</p>
+                    <a href="@Url.Action("NumberGuessing")" class="btn btn-success">Play Now</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card game-card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="game-icon mb-3">➕</div>
+                    <h5 class="card-title">Arithmetic Challenge</h5>
+                    <p class="card-text">Solve math problems quickly</p>
+                    <a href="@Url.Action("ArithmeticChallenge")" class="btn btn-success">Play Now</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card game-card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="game-icon mb-3">⚡</div>
+                    <h5 class="card-title">Fast Calculation</h5>
+                    <p class="card-text">Quick mental math under pressure</p>
+                    <a href="@Url.Action("FastCalculation")" class="btn btn-success">Play Now</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card game-card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="game-icon mb-3">🔗</div>
+                    <h5 class="card-title">Sequence Completion</h5>
+                    <p class="card-text">Complete number and pattern sequences</p>
+                    <a href="@Url.Action("SequenceCompletion")" class="btn btn-success">Play Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.game-card {
+    transition: transform 0.3s ease;
+    border: none;
+    border-radius: 15px;
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.game-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.card-title {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.card-text {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+</style>

@@ -1,0 +1,219 @@
+@model EasyLearn.Models.Course
+@{
+    ViewData["Title"] = "Manage Quizzes - " + Model.Title;
+    Layout = "_Layout";
+}
+
+<link href="~/css/lesson-management.css" rel="stylesheet" />
+
+<div class="quiz-management">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/instructor">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="/instructor/my-courses">My Courses</a></li>
+                            <li class="breadcrumb-item active">@Model.Title</li>
+                        </ol>
+                    </nav>
+                    <h1 class="page-title">
+                        <i class="fas fa-question-circle"></i>
+                        Manage Quizzes
+                    </h1>
+                    <p class="page-subtitle">Course: @Model.Title</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createQuizModal">
+                        <i class="fas fa-plus"></i>
+                        Create New Quiz
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Info -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="course-info-card">
+                    <div class="course-thumbnail">
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img src="@Model.ImageUrl" alt="@Model.Title">
+                        }
+                        else
+                        {
+                            <div class="placeholder-image">
+                                <i class="fas fa-book"></i>
+                            </div>
+                        }
+                    </div>
+                    <div class="course-details">
+                        <h3>@Model.Title</h3>
+                        <p class="course-description">@Model.Description</p>
+                        <div class="course-stats">
+                            <span class="stat-item">
+                                <i class="fas fa-question-circle"></i>
+                                @(Model.Quizzes?.Count ?? 0) Quizzes
+                            </span>
+                            <span class="stat-item">
+                                <i class="fas fa-users"></i>
+                                @(Model.Enrollments?.Count ?? 0) Students
+                            </span>
+                            <span class="stat-item">
+                                <i class="fas fa-tag"></i>
+                                @(Model.Category?.Name ?? "Uncategorized")
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quizzes List -->
+        <div class="row">
+            <div class="col-12">
+                <div class="quizzes-card">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="fas fa-list"></i>
+                            Course Quizzes
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.Quizzes?.Any() == true)
+                        {
+                            <div class="quizzes-list">
+                                @foreach (var quiz in Model.Quizzes)
+                                {
+                                    <div class="quiz-item">
+                                        <div class="quiz-content">
+                                            <div class="quiz-header">
+                                                <div class="quiz-info">
+                                                    <h6 class="quiz-title">@quiz.Title</h6>
+                                                    <p class="quiz-description">@quiz.Description</p>
+                                                </div>
+                                                <div class="quiz-actions">
+                                                    <a href="/instructor/manage-questions/@quiz.Id" class="btn btn-sm btn-outline-info">
+                                                        <i class="fas fa-list"></i>
+                                                        Questions
+                                                    </a>
+                                                    <button class="btn btn-sm btn-outline-primary" onclick="editQuiz(@quiz.Id)">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteQuiz(@quiz.Id)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="quiz-details">
+                                                <div class="quiz-meta">
+                                                    <span class="meta-item">
+                                                        <i class="fas fa-question"></i>
+                                                        @(quiz.Questions?.Count ?? 0) Questions
+                                                    </span>
+                                                    <span class="meta-item">
+                                                        <i class="fas fa-clock"></i>
+                                                        @quiz.TimeLimit min
+                                                    </span>
+                                                    <span class="meta-item">
+                                                        <i class="fas fa-percentage"></i>
+                                                        @quiz.PassingScore% to pass
+                                                    </span>
+                                                    <span class="meta-item status-@(quiz.IsActive ? "active" : "inactive")">
+                                                        <i class="fas fa-circle"></i>
+                                                        @(quiz.IsActive ? "Active" : "Inactive")
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="fas fa-question-circle"></i>
+                                </div>
+                                <h6>No quizzes yet</h6>
+                                <p>Create quizzes to assess your students' understanding</p>
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createQuizModal">
+                                    <i class="fas fa-plus"></i>
+                                    Create First Quiz
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Quiz Modal -->
+<div class="modal fade" id="createQuizModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus"></i>
+                    Create New Quiz
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="createQuizForm">
+                <div class="modal-body">
+                    <input type="hidden" name="CourseId" value="@Model.Id" />
+                    
+                    <!-- Quiz Basic Info -->
+                    <div class="quiz-section">
+                        <h6 class="section-title">Quiz Information</h6>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label class="form-label">Quiz Title *</label>
+                                    <input type="text" class="form-control" name="Title" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Time Limit (minutes)</label>
+                                    <input type="number" class="form-control" name="TimeLimit" value="30" min="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control" name="Description" rows="2"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Passing Score (%)</label>
+                                    <input type="number" class="form-control" name="PassingScore" value="70" min="1" max="100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Create Quiz
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/quiz-management-simple.js"></script>
+}

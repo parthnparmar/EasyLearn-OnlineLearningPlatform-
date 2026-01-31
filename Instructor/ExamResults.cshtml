@@ -1,0 +1,118 @@
+@model EasyLearn.Models.Exam
+
+@{
+    ViewData["Title"] = "Exam Results";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-lg-flex">
+                        <div>
+                            <h5 class="mb-0">@Model.Title - Results</h5>
+                            <p class="text-sm mb-0">@Model.Course.Title</p>
+                        </div>
+                        <div class="ms-auto my-auto mt-lg-0 mt-4">
+                            <a href="/instructor/exam-dashboard" class="btn btn-outline-primary btn-sm mb-0">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-0">
+                    <div class="table-responsive">
+                        <table class="table table-flush">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Started At</th>
+                                    <th>Status</th>
+                                    <th>Part A Score</th>
+                                    <th>Part B Score</th>
+                                    <th>Internal Score</th>
+                                    <th>Total Score</th>
+                                    <th>Percentage</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.ExamAttempts.Any())
+                                {
+                                    @foreach (var attempt in Model.ExamAttempts.OrderByDescending(a => a.StartedAt))
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="ms-3">
+                                                        <h6 class="mb-0 text-sm">@attempt.Student.FirstName @attempt.Student.LastName</h6>
+                                                        <p class="text-xs text-secondary mb-0">@attempt.Student.Email</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="text-sm">@attempt.StartedAt.ToString("MMM dd, yyyy HH:mm")</span>
+                                            </td>
+                                            <td>
+                                                @if (attempt.IsCompleted)
+                                                {
+                                                    <span class="badge badge-sm bg-gradient-success">Completed</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-sm bg-gradient-warning">In Progress</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="text-sm font-weight-bold">@attempt.PartAScore/@Model.PartAMarks</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-sm font-weight-bold">@attempt.PartBScore/@Model.PartBMarks</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-sm font-weight-bold">@attempt.InternalScore/@Model.InternalMarks</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-sm font-weight-bold">@attempt.TotalScore/@Model.TotalMarks</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-sm font-weight-bold">@attempt.Percentage.ToString("F1")%</span>
+                                            </td>
+                                            <td>
+                                                @if (attempt.IsPassed)
+                                                {
+                                                    <span class="badge badge-sm bg-gradient-success">Pass</span>
+                                                }
+                                                else if (attempt.IsCompleted)
+                                                {
+                                                    <span class="badge badge-sm bg-gradient-danger">Fail</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-sm bg-gradient-secondary">Pending</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="9" class="text-center py-4">
+                                            <div class="text-center">
+                                                <i class="fas fa-chart-bar fa-3x text-secondary mb-3"></i>
+                                                <h5 class="text-secondary">No Exam Attempts</h5>
+                                                <p class="text-sm text-secondary">No students have attempted this exam yet</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

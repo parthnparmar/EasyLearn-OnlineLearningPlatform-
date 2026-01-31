@@ -1,0 +1,391 @@
+@{
+    ViewData["Title"] = "Assign Exam Dates";
+    var exam = ViewBag.Exam as EasyLearn.Models.Exam;
+    var unassignedStudents = ViewBag.UnassignedStudents as List<EasyLearn.Models.ApplicationUser>;
+    var assignedSchedules = ViewBag.AssignedSchedules as List<EasyLearn.Models.ExamSchedule>;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-calendar-alt me-2"></i>
+                        Assign Exam Dates - @exam?.Title
+                    </h4>
+                    <small>Course: @exam?.Course?.Title</small>
+                </div>
+                <div class="card-body">
+                    
+                    <!-- Exam Information -->
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-2"></i>Exam Information</h6>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Duration:</strong> @exam?.DurationMinutes minutes
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Total Marks:</strong> @exam?.TotalMarks
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Passing:</strong> @exam?.PassingPercentage%
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Status:</strong> 
+                                @if (exam?.IsApproved == true)
+                                {
+                                    <span class="badge bg-success">Approved</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning">Pending Approval</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bulk Assignment Section -->
+                    @if (unassignedStudents?.Any() == true)
+                    {
+                        <div class="card mb-4">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-users me-2"></i>
+                                    Bulk Assign Exam Date (@unassignedStudents.Count unassigned students)
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="bulkAssignForm">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Exam Date</label>
+                                            <input type="date" class="form-control" id="bulkExamDate" min="@DateTime.Today.ToString("yyyy-MM-dd")" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Session</label>
+                                            <select class="form-select" id="bulkSession" required>
+                                                <option value="">Select Session</option>
+                                                <option value="Morning">Morning (9:00 AM)</option>
+                                                <option value="Afternoon">Afternoon (2:00 PM)</option>
+                                                <option value="Evening">Evening (6:00 PM)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 d-flex align-items-end">
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fas fa-calendar-plus me-2"></i>
+                                                Assign to All
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Tabs for Assigned and Unassigned Students -->
+                    <ul class="nav nav-tabs" id="studentTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="unassigned-tab" data-bs-toggle="tab" data-bs-target="#unassigned" type="button" role="tab">
+                                <i class="fas fa-user-clock me-2"></i>
+                                Unassigned Students (@(unassignedStudents?.Count ?? 0))
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="assigned-tab" data-bs-toggle="tab" data-bs-target="#assigned" type="button" role="tab">
+                                <i class="fas fa-user-check me-2"></i>
+                                Assigned Students (@(assignedSchedules?.Count ?? 0))
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="studentTabsContent">
+                        <!-- Unassigned Students Tab -->
+                        <div class="tab-pane fade show active" id="unassigned" role="tabpanel">
+                            <div class="mt-3">
+                                @if (unassignedStudents?.Any() == true)
+                                {
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th>Student</th>
+                                                    <th>Email</th>
+                                                    <th>Enrolled Date</th>
+                                                    <th>Exam Date</th>
+                                                    <th>Session</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var student in unassignedStudents)
+                                                {
+                                                    <tr id="student-@student.Id">
+                                                        <td>
+                                                            <strong>@($"{student.FirstName} {student.LastName}".Trim())</strong>
+                                                        </td>
+                                                        <td>@student.Email</td>
+                                                        <td>
+                                                            @{
+                                                                var enrollment = ViewBag.CompletedEnrollments as List<EasyLearn.Models.Enrollment>;
+                                                                var studentEnrollment = enrollment?.FirstOrDefault(e => e.StudentId == student.Id);
+                                                            }
+                                                            @(studentEnrollment?.EnrolledAt.ToString("MMM dd, yyyy") ?? "N/A")
+                                                        </td>
+                                                        <td>
+                                                            <input type="date" class="form-control form-control-sm exam-date" 
+                                                                   data-student-id="@student.Id" 
+                                                                   min="@DateTime.Today.ToString("yyyy-MM-dd")">
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-select form-select-sm exam-session" data-student-id="@student.Id">
+                                                                <option value="">Select</option>
+                                                                <option value="Morning">Morning (9:00 AM)</option>
+                                                                <option value="Afternoon">Afternoon (2:00 PM)</option>
+                                                                <option value="Evening">Evening (6:00 PM)</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <button class="btn btn-primary btn-sm assign-btn" 
+                                                                    data-student-id="@student.Id"
+                                                                    data-student-name="@($"{student.FirstName} {student.LastName}".Trim())">
+                                                                <i class="fas fa-calendar-plus me-1"></i>
+                                                                Assign
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-success text-center">
+                                        <i class="fas fa-check-circle fa-3x mb-3"></i>
+                                        <h5>All Students Assigned!</h5>
+                                        <p>All enrolled students have been assigned exam dates.</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Assigned Students Tab -->
+                        <div class="tab-pane fade" id="assigned" role="tabpanel">
+                            <div class="mt-3">
+                                @if (assignedSchedules?.Any() == true)
+                                {
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th>Student</th>
+                                                    <th>Email</th>
+                                                    <th>Assigned Date</th>
+                                                    <th>Session</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var schedule in assignedSchedules)
+                                                {
+                                                    <tr id="assigned-@schedule.Id">
+                                                        <td>
+                                                            <strong>@($"{schedule.Student?.FirstName} {schedule.Student?.LastName}".Trim())</strong>
+                                                        </td>
+                                                        <td>@schedule.Student?.Email</td>
+                                                        <td>
+                                                            <strong>@schedule.ScheduledDate.ToString("MMM dd, yyyy")</strong>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge bg-info">@schedule.Session</span>
+                                                        </td>
+                                                        <td>
+                                                            @{
+                                                                var now = DateTime.UtcNow;
+                                                                var examStart = schedule.ScheduledDate.Date.AddHours(
+                                                                    schedule.Session.ToLower() switch {
+                                                                        "morning" => 9,
+                                                                        "afternoon" => 14,
+                                                                        "evening" => 18,
+                                                                        _ => 9
+                                                                    });
+                                                                var examEnd = examStart.AddMinutes(exam?.DurationMinutes ?? 120);
+                                                            }
+                                                            @if (now < examStart)
+                                                            {
+                                                                <span class="badge bg-warning">Upcoming</span>
+                                                            }
+                                                            else if (now >= examStart && now <= examEnd)
+                                                            {
+                                                                <span class="badge bg-success">Active</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge bg-secondary">Expired</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            <button class="btn btn-danger btn-sm remove-assignment-btn" 
+                                                                    data-schedule-id="@schedule.Id"
+                                                                    data-student-name="@($"{schedule.Student?.FirstName} {schedule.Student?.LastName}".Trim())">
+                                                                <i class="fas fa-times me-1"></i>
+                                                                Remove
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-warning text-center">
+                                        <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                                        <h5>No Students Assigned</h5>
+                                        <p>No students have been assigned exam dates yet.</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-4 text-center">
+                        <a href="@Url.Action("ManageExams", new { courseId = exam?.CourseId })" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Back to Manage Exams
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+$(document).ready(function() {
+    const examId = @exam?.Id;
+    
+    // Individual assignment
+    $('.assign-btn').click(function() {
+        const studentId = $(this).data('student-id');
+        const studentName = $(this).data('student-name');
+        const examDate = $(`.exam-date[data-student-id="${studentId}"]`).val();
+        const session = $(`.exam-session[data-student-id="${studentId}"]`).val();
+        
+        if (!examDate || !session) {
+            alert('Please select both exam date and session.');
+            return;
+        }
+        
+        if (confirm(`Assign exam date ${examDate} (${session}) to ${studentName}?`)) {
+            assignExamDate(studentId, examDate, session, $(this));
+        }
+    });
+    
+    // Bulk assignment
+    $('#bulkAssignForm').submit(function(e) {
+        e.preventDefault();
+        
+        const examDate = $('#bulkExamDate').val();
+        const session = $('#bulkSession').val();
+        
+        if (!examDate || !session) {
+            alert('Please select both exam date and session.');
+            return;
+        }
+        
+        if (confirm(`Assign exam date ${examDate} (${session}) to all unassigned students?`)) {
+            bulkAssignExamDates(examDate, session);
+        }
+    });
+    
+    // Remove assignment
+    $('.remove-assignment-btn').click(function() {
+        const scheduleId = $(this).data('schedule-id');
+        const studentName = $(this).data('student-name');
+        
+        if (confirm(`Remove exam assignment for ${studentName}?`)) {
+            removeExamAssignment(scheduleId, $(this));
+        }
+    });
+    
+    function assignExamDate(studentId, examDate, session, button) {
+        button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Assigning...');
+        
+        $.post('@Url.Action("AssignExamDate")', {
+            examId: examId,
+            studentId: studentId,
+            examDate: examDate,
+            session: session
+        })
+        .done(function(response) {
+            if (response.success) {
+                alert('Exam date assigned successfully!');
+                location.reload();
+            } else {
+                alert('Error: ' + response.message);
+            }
+        })
+        .fail(function() {
+            alert('An error occurred while assigning exam date.');
+        })
+        .always(function() {
+            button.prop('disabled', false).html('<i class="fas fa-calendar-plus me-1"></i>Assign');
+        });
+    }
+    
+    function bulkAssignExamDates(examDate, session) {
+        const submitBtn = $('#bulkAssignForm button[type="submit"]');
+        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Assigning...');
+        
+        $.post('@Url.Action("BulkAssignExamDates")', {
+            examId: examId,
+            examDate: examDate,
+            session: session
+        })
+        .done(function(response) {
+            if (response.success) {
+                alert(response.message);
+                location.reload();
+            } else {
+                alert('Error: ' + response.message);
+            }
+        })
+        .fail(function() {
+            alert('An error occurred during bulk assignment.');
+        })
+        .always(function() {
+            submitBtn.prop('disabled', false).html('<i class="fas fa-calendar-plus me-2"></i>Assign to All');
+        });
+    }
+    
+    function removeExamAssignment(scheduleId, button) {
+        button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Removing...');
+        
+        $.ajax({
+            url: '@Url.Action("RemoveExamAssignment")/' + scheduleId,
+            type: 'DELETE'
+        })
+        .done(function(response) {
+            if (response.success) {
+                alert('Assignment removed successfully!');
+                location.reload();
+            } else {
+                alert('Error: ' + response.message);
+            }
+        })
+        .fail(function() {
+            alert('An error occurred while removing assignment.');
+        })
+        .always(function() {
+            button.prop('disabled', false).html('<i class="fas fa-times me-1"></i>Remove');
+        });
+    }
+});
+</script>
+}

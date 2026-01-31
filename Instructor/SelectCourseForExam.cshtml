@@ -1,0 +1,113 @@
+@{
+    ViewData["Title"] = "Select Course for Exam";
+    var courses = ViewBag.Courses as List<EasyLearn.Models.Course> ?? new List<EasyLearn.Models.Course>();
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h5 class="mb-0">Create Exam</h5>
+                            <p class="text-sm mb-0">Select a course to create an exam</p>
+                        </div>
+                        <div class="ms-auto">
+                            <a href="/instructor/exam-dashboard" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (courses.Any())
+                    {
+                        <div class="row">
+                            @foreach (var course in courses)
+                            {
+                                <div class="col-lg-6 col-md-12 mb-4">
+                                    <div class="card h-100 course-card">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                                <div>
+                                                    <h6 class="mb-1">@course.Title</h6>
+                                                    <p class="text-sm text-muted mb-0">@course.Category.Name</p>
+                                                </div>
+                                                <span class="badge bg-success">@course.Enrollments.Count Students</span>
+                                            </div>
+
+                                            <p class="text-sm mb-3">@course.Description</p>
+
+                                            <div class="row text-center mb-3">
+                                                <div class="col-4">
+                                                    <div class="border-end">
+                                                        <h6 class="text-primary mb-0">@course.Lessons.Count</h6>
+                                                        <p class="text-xs text-muted mb-0">Lessons</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="border-end">
+                                                        <h6 class="text-info mb-0">@course.Quizzes.Count</h6>
+                                                        <p class="text-xs text-muted mb-0">Quizzes</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <h6 class="text-warning mb-0">@course.Reviews.Count</h6>
+                                                    <p class="text-xs text-muted mb-0">Reviews</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-calendar me-1"></i>
+                                                    Created @course.CreatedAt.ToString("MMM dd, yyyy")
+                                                </small>
+                                                <a href="/instructor/create-exam/@course.Id" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-plus me-2"></i>Create Exam
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Approved Courses</h5>
+                            <p class="text-sm text-muted">You need to have approved courses before creating exams</p>
+                            <a href="/instructor/create-course" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Create Course
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.course-card').hover(
+                function() { $(this).addClass('shadow-lg'); },
+                function() { $(this).removeClass('shadow-lg'); }
+            );
+        });
+    </script>
+}
+
+<style>
+    .course-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .course-card:hover {
+        transform: translateY(-2px);
+    }
+</style>

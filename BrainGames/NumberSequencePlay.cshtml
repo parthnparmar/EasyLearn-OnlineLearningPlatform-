@@ -1,0 +1,164 @@
+@model EasyLearn.Models.ViewModels.PuzzlePlayViewModel
+@{
+    ViewData["Title"] = "Number Sequence - " + Model.Game.Title;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="mb-0">🔢 @Model.Game.Title</h3>
+                    <p class="text-muted mb-0">Difficulty: <span class="badge badge-difficulty-@Model.Game.Difficulty.ToString().ToLower()">@Model.Game.Difficulty</span></p>
+                </div>
+                <div>
+                    <a href="@Url.Action("MathGames", "BrainGames")" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Math Games
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Number Sequence Challenge</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="sequence-display mb-4">
+                        <h2 class="text-primary">1, 2, 4, 8, ?</h2>
+                        <p class="text-muted">What comes next in this sequence?</p>
+                    </div>
+                    
+                    <div class="answer-input mb-4">
+                        <input type="number" id="answer-input" class="form-control form-control-lg text-center" placeholder="Enter your answer" style="max-width: 200px; margin: 0 auto;">
+                    </div>
+                    
+                    <div class="game-controls">
+                        <button type="button" class="btn btn-success btn-lg me-2" id="submit-answer">
+                            <i class="fas fa-check"></i> Submit Answer
+                        </button>
+                        <button type="button" class="btn btn-warning btn-lg" id="hint-btn">
+                            <i class="fas fa-lightbulb"></i> Get Hint
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-info-circle"></i> Game Status</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h4 class="text-primary">@Model.Attempt.Score</h4>
+                            <small class="text-muted">Score</small>
+                        </div>
+                        <div class="col-6">
+                            <h4 class="text-info" id="time-display">00:00</h4>
+                            <small class="text-muted">Time</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-question-circle"></i> How to Play</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Look for patterns in the sequence
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Consider arithmetic or geometric progressions
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Think about mathematical relationships
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            Use hints if you're stuck!
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        let startTime = Date.now();
+        let timer;
+
+        $(document).ready(function() {
+            startTimer();
+            
+            $('#submit-answer').click(submitAnswer);
+            $('#hint-btn').click(getHint);
+            
+            $('#answer-input').keypress(function(e) {
+                if (e.which === 13) {
+                    submitAnswer();
+                }
+            });
+        });
+
+        function startTimer() {
+            timer = setInterval(function() {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                $('#time-display').text(minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0'));
+            }, 1000);
+        }
+
+        function submitAnswer() {
+            const answer = $('#answer-input').val();
+            if (!answer) {
+                Swal.fire('Please enter an answer!', '', 'warning');
+                return;
+            }
+
+            // For demo purposes, check if answer is 16 (correct for 1,2,4,8,?)
+            if (parseInt(answer) === 16) {
+                clearInterval(timer);
+                Swal.fire({
+                    title: '🎉 Correct!',
+                    text: 'Well done! The pattern is doubling each number.',
+                    icon: 'success',
+                    confirmButtonText: 'Continue'
+                }).then(() => {
+                    window.location.href = '@Url.Action("MathGames", "BrainGames")';
+                });
+            } else {
+                Swal.fire({
+                    title: 'Not quite right',
+                    text: 'Try again! Look for the pattern.',
+                    icon: 'error',
+                    confirmButtonText: 'Try Again'
+                });
+            }
+        }
+
+        function getHint() {
+            Swal.fire({
+                title: '💡 Hint',
+                text: 'Each number is double the previous number. What is 8 × 2?',
+                icon: 'info',
+                confirmButtonText: 'Got it!'
+            });
+        }
+    </script>
+}

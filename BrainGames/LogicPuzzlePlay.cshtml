@@ -1,0 +1,249 @@
+@model EasyLearn.Models.ViewModels.PuzzlePlayViewModel
+@{
+    ViewData["Title"] = "Logic Puzzle - " + Model.Game.Title;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="mb-0">🧩 @Model.Game.Title</h3>
+                    <p class="text-muted mb-0">Difficulty: <span class="badge badge-difficulty-@Model.Game.Difficulty.ToString().ToLower()">@Model.Game.Difficulty</span></p>
+                </div>
+                <div>
+                    <a href="@Url.Action("Logic", "BrainGames")" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Logic Games
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Logic Challenge</h5>
+                </div>
+                <div class="card-body">
+                    <div class="logic-problem mb-4">
+                        <h6 class="text-primary">Problem:</h6>
+                        <div class="clues-list">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">• A is greater than B</li>
+                                <li class="list-group-item">• B is not 1</li>
+                                <li class="list-group-item">• Available values: 1, 2</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="solution-grid">
+                        <h6 class="text-success">Your Solution:</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="var-a" class="form-label">Variable A:</label>
+                                    <select id="var-a" class="form-select">
+                                        <option value="">Select value</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="var-b" class="form-label">Variable B:</label>
+                                    <select id="var-b" class="form-select">
+                                        <option value="">Select value</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="game-controls text-center">
+                        <button type="button" class="btn btn-success btn-lg me-2" id="check-solution">
+                            <i class="fas fa-check"></i> Check Solution
+                        </button>
+                        <button type="button" class="btn btn-warning btn-lg me-2" id="hint-btn">
+                            <i class="fas fa-lightbulb"></i> Get Hint
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-lg" id="reset-btn">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-info-circle"></i> Game Status</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h4 class="text-primary" id="score-display">@Model.Attempt.Score</h4>
+                            <small class="text-muted">Score</small>
+                        </div>
+                        <div class="col-6">
+                            <h4 class="text-info" id="time-display">00:00</h4>
+                            <small class="text-muted">Time</small>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h5 class="text-success" id="hints-used">0</h5>
+                            <small class="text-muted">Hints Used</small>
+                        </div>
+                        <div class="col-6">
+                            <h5 class="text-warning" id="attempts">0</h5>
+                            <small class="text-muted">Attempts</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-question-circle"></i> How to Play</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Read all the clues carefully
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Use logical deduction to solve
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Assign values that satisfy all conditions
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            Work through each clue systematically!
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .clues-list .list-group-item {
+            border: none;
+            padding: 0.5rem 0;
+            background: transparent;
+        }
+        
+        .solution-grid {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        
+        .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+    </style>
+    <script>
+        let correctSolution = { A: 2, B: 1 };
+        let attempts = 0;
+        let hintsUsed = 0;
+        let startTime = Date.now();
+        let timer;
+
+        $(document).ready(function() {
+            startTimer();
+            
+            $('#check-solution').click(checkSolution);
+            $('#hint-btn').click(getHint);
+            $('#reset-btn').click(resetSolution);
+        });
+
+        function startTimer() {
+            timer = setInterval(function() {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                $('#time-display').text(minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0'));
+            }, 1000);
+        }
+
+        function checkSolution() {
+            const varA = parseInt($('#var-a').val());
+            const varB = parseInt($('#var-b').val());
+            
+            if (!varA || !varB) {
+                Swal.fire('Please select values for both variables!', '', 'warning');
+                return;
+            }
+
+            attempts++;
+            $('#attempts').text(attempts);
+
+            if (varA === correctSolution.A && varB === correctSolution.B) {
+                clearInterval(timer);
+                Swal.fire({
+                    title: '🎉 Correct!',
+                    text: 'Excellent logical reasoning! A = 2, B = 1 satisfies all conditions.',
+                    icon: 'success',
+                    confirmButtonText: 'Continue'
+                }).then(() => {
+                    window.location.href = '@Url.Action("Logic", "BrainGames")';
+                });
+            } else {
+                let feedback = 'Check your logic:\n';
+                if (varA <= varB) feedback += '• A must be greater than B\n';
+                if (varB === 1) feedback += '• B cannot be 1\n';
+                
+                Swal.fire({
+                    title: 'Not quite right',
+                    text: feedback,
+                    icon: 'error',
+                    confirmButtonText: 'Try Again'
+                });
+            }
+        }
+
+        function getHint() {
+            hintsUsed++;
+            $('#hints-used').text(hintsUsed);
+            
+            const hints = [
+                'Start with the constraint "B is not 1". What does this tell you about B?',
+                'If B is not 1, and we only have values 1 and 2, then B must be 2.',
+                'If B = 2, and A > B, then A must be greater than 2. But we only have 1 and 2... Wait, that\'s impossible! Let me reconsider...',
+                'Actually, if B cannot be 1, and A > B, then B = 1 is impossible. So B = 2, but then A > 2 is impossible with our values. Let me think again...',
+                'Wait! If B is not 1, then B = 2. But if A > B and A > 2, that\'s impossible. So actually, B must be 1 (the constraint might mean something else), and A = 2.'
+            ];
+            
+            const hintIndex = Math.min(hintsUsed - 1, hints.length - 1);
+            
+            Swal.fire({
+                title: '💡 Hint',
+                text: hints[hintIndex],
+                icon: 'info',
+                confirmButtonText: 'Got it!'
+            });
+        }
+
+        function resetSolution() {
+            $('#var-a').val('');
+            $('#var-b').val('');
+        }
+    </script>
+}

@@ -1,0 +1,452 @@
+@{
+    ViewData["Title"] = "Instructor Help Guide - EasyLearn";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h4 class="mb-0 text-success">
+                                <i class="fas fa-chalkboard-teacher me-2"></i>Instructor Help Guide
+                            </h4>
+                            <p class="text-sm mb-0">Complete guide for instructors using EasyLearn</p>
+                        </div>
+                        <div class="ms-auto">
+                            <a href="/help" class="btn btn-outline-success btn-sm">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Help
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Quick Navigation -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="text-success mb-3">Quick Navigation</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled">
+                                                <li><a href="#getting-started" class="text-decoration-none">1. Getting Started</a></li>
+                                                <li><a href="#course-creation" class="text-decoration-none">2. Course Creation</a></li>
+                                                <li><a href="#lesson-management" class="text-decoration-none">3. Lesson Management</a></li>
+                                                <li><a href="#quiz-system" class="text-decoration-none">4. Quiz System</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled">
+                                                <li><a href="#exam-system" class="text-decoration-none">5. Exam System</a></li>
+                                                <li><a href="#student-management" class="text-decoration-none">6. Student Management</a></li>
+                                                <li><a href="#analytics" class="text-decoration-none">7. Analytics & Reports</a></li>
+                                                <li><a href="#best-practices" class="text-decoration-none">8. Best Practices</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Getting Started -->
+                    <div id="getting-started" class="mb-5">
+                        <h5 class="text-success mb-3">
+                            <i class="fas fa-rocket me-2"></i>1. Getting Started as an Instructor
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Account Setup</h6>
+                                <ol>
+                                    <li>Register with your professional email</li>
+                                    <li>Contact admin to get Instructor role assigned</li>
+                                    <li>Complete your profile with professional details</li>
+                                    <li>Access the Instructor Dashboard</li>
+                                </ol>
+
+                                <h6 class="mt-4">Instructor Dashboard Overview</h6>
+                                <ul>
+                                    <li><strong>My Courses:</strong> View and manage your courses</li>
+                                    <li><strong>Student Performance:</strong> Track student progress</li>
+                                    <li><strong>Exam Management:</strong> Create and manage exams</li>
+                                    <li><strong>Analytics:</strong> Course and student statistics</li>
+                                </ul>
+
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Note:</strong> All courses require admin approval before becoming visible to students.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Course Creation -->
+                    <div id="course-creation" class="mb-5">
+                        <h5 class="text-success mb-3">
+                            <i class="fas fa-plus-circle me-2"></i>2. Course Creation
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Creating a New Course</h6>
+                                <ol>
+                                    <li>Go to "Create Course" from the instructor menu</li>
+                                    <li>Fill in course details:
+                                        <ul>
+                                            <li><strong>Title:</strong> Clear, descriptive course name</li>
+                                            <li><strong>Description:</strong> Detailed course overview</li>
+                                            <li><strong>Category:</strong> Select appropriate category</li>
+                                            <li><strong>Duration:</strong> Estimated completion time</li>
+                                            <li><strong>Level:</strong> Beginner, Intermediate, or Advanced</li>
+                                        </ul>
+                                    </li>
+                                    <li>Upload course thumbnail image</li>
+                                    <li>Set course objectives and prerequisites</li>
+                                    <li>Submit for admin approval</li>
+                                </ol>
+
+                                <h6 class="mt-4">Course Settings</h6>
+                                <ul>
+                                    <li><strong>Pricing:</strong> Currently all courses are free</li>
+                                    <li><strong>Enrollment Limit:</strong> Set maximum students (optional)</li>
+                                    <li><strong>Certificate Eligibility:</strong> Enable certificate generation</li>
+                                    <li><strong>Course Status:</strong> Active/Inactive toggle</li>
+                                </ul>
+
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-clock me-2"></i>
+                                    <strong>Approval Process:</strong> New courses require admin approval and may take 24-48 hours.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Management -->
+                    <div id="lesson-management" class="mb-5">
+                        <h5 class="text-success mb-3">
+                            <i class="fas fa-video me-2"></i>3. Lesson Management
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Adding Lessons</h6>
+                                <ol>
+                                    <li>Select your course from "My Courses"</li>
+                                    <li>Click "Manage Lessons"</li>
+                                    <li>Click "Add New Lesson"</li>
+                                    <li>Fill in lesson details:
+                                        <ul>
+                                            <li><strong>Title:</strong> Lesson name</li>
+                                            <li><strong>Description:</strong> Lesson overview</li>
+                                            <li><strong>Video URL:</strong> YouTube video link</li>
+                                            <li><strong>Duration:</strong> Video length in minutes</li>
+                                            <li><strong>Order:</strong> Lesson sequence number</li>
+                                        </ul>
+                                    </li>
+                                    <li>Upload lesson materials (PDFs, documents)</li>
+                                    <li>Save the lesson</li>
+                                </ol>
+
+                                <h6 class="mt-4">Video Requirements</h6>
+                                <ul>
+                                    <li><strong>Platform:</strong> YouTube videos only</li>
+                                    <li><strong>URL Format:</strong> Standard YouTube watch URLs</li>
+                                    <li><strong>Quality:</strong> Minimum 720p recommended</li>
+                                    <li><strong>Audio:</strong> Clear audio quality essential</li>
+                                </ul>
+
+                                <h6 class="mt-4">Lesson Materials</h6>
+                                <ul>
+                                    <li>Upload supplementary materials (PDFs, slides, code files)</li>
+                                    <li>Maximum file size: 10MB per file</li>
+                                    <li>Supported formats: PDF, DOC, DOCX, PPT, PPTX, ZIP</li>
+                                </ul>
+
+                                <div class="alert alert-success">
+                                    <i class="fas fa-lightbulb me-2"></i>
+                                    <strong>Tip:</strong> Structure lessons logically and keep videos under 15 minutes for better engagement.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quiz System -->
+                    <div id="quiz-system" class="mb-5">
+                        <h5 class="text-success mb-3">
+                            <i class="fas fa-question-circle me-2"></i>4. Quiz System
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Creating Quizzes</h6>
+                                <ol>
+                                    <li>Go to "Manage Quizzes" for your course</li>
+                                    <li>Click "Create New Quiz"</li>
+                                    <li>Set quiz details:
+                                        <ul>
+                                            <li><strong>Title:</strong> Quiz name</li>
+                                            <li><strong>Description:</strong> Quiz instructions</li>
+                                            <li><strong>Passing Score:</strong> Minimum percentage to pass</li>
+                                            <li><strong>Time Limit:</strong> Quiz duration (optional)</li>
+                                        </ul>
+                                    </li>
+                                    <li>Add questions to the quiz</li>
+                                </ol>
+
+                                <h6 class="mt-4">Question Types</h6>
+                                <ul>
+                                    <li><strong>Multiple Choice:</strong> 4 options with one correct answer</li>
+                                    <li><strong>True/False:</strong> Simple true or false questions</li>
+                                </ul>
+
+                                <h6 class="mt-4">Scoring System</h6>
+                                <ul>
+                                    <li><strong>Correct Answer:</strong> +2 points</li>
+                                    <li><strong>Wrong Answer:</strong> -1 point</li>
+                                    <li><strong>Unattempted:</strong> 0 points</li>
+                                </ul>
+
+                                <h6 class="mt-4">Adding Questions</h6>
+                                <ol>
+                                    <li>Click "Add Question" in your quiz</li>
+                                    <li>Enter question text</li>
+                                    <li>Add answer options</li>
+                                    <li>Mark the correct answer</li>
+                                    <li>Set question order</li>
+                                    <li>Save the question</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exam System -->
+                    <div id="exam-system" class="mb-5">
+                        <h5 class="text-success mb-3">
+                            <i class="fas fa-clipboard-check me-2"></i>5. Exam System
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Creating Exams</h6>
+                                <ol>
+                                    <li>Go to "Exam Management" from instructor dashboard</li>
+                                    <li>Click "Create New Exam"</li>
+                                    <li>Set exam details:
+                                        <ul>
+                                            <li><strong>Title:</strong> Exam name</li>
+                                            <li><strong>Course:</strong> Associated course</li>
+                                            <li><strong>Duration:</strong> Total exam time (default 120 minutes)</li>
+                                            <li><strong>Passing Percentage:</strong> Minimum score to pass (default 75%)</li>
+                                        </ul>
+                                    </li>
+                                    <li>Submit for admin approval</li>
+                                </ol>
+
+                                <h6 class="mt-4">Exam Structure</h6>
+                                <ul>
+                                    <li><strong>Part A:</strong> Multiple Choice Questions (50 marks, 60 minutes)</li>
+                                    <li><strong>Part B:</strong> Written Questions (30 marks, 60 minutes)</li>
+                                    <li><strong>Internal Assessment:</strong> Instructor graded (20 marks)</li>
+                                </ul>
+
+                                <h6 class="mt-4">Adding Exam Questions</h6>
+                                <ol>
+                                    <li>Select approved exam</li>
+                                    <li>Click "Manage Questions"</li>
+                                    <li>Add Part A questions (MCQs)</li>
+                                    <li>Add Part B questions (Written)</li>
+                                    <li>Set question points and order</li>
+                                </ol>
+
+                                <h6 class="mt-4">Scheduling Exams</h6>
+                                <ol>
+                                    <li>Go to "Assign Exam Dates"</li>
+                                    <li>Select exam and students</li>
+                                    <li>Set exam date and session (Morning/Afternoon/Evening)</li>
+                                    <li>Assign to individual students</li>
+                                </ol>
+
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <strong>Important:</strong> Students can only access exams during their assigned time slots.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Student Management -->
+                    <div id="student-management" class="mb-5">
+                        <h5 class="text-success mb-3">
+                            <i class="fas fa-users me-2"></i>6. Student Management
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Viewing Student Progress</h6>
+                                <ol>
+                                    <li>Go to "Student Performance" for any course</li>
+                                    <li>View enrolled students list</li>
+                                    <li>Check individual progress:
+                                        <ul>
+                                            <li>Lessons completed</li>
+                                            <li>Quiz scores</li>
+                                            <li>Overall progress percentage</li>
+                                            <li>Time spent learning</li>
+                                        </ul>
+                                    </li>
+                                </ol>
+
+                                <h6 class="mt-4">Grading Internal Assessments</h6>
+                                <ol>
+                                    <li>Go to "Internal Assessments"</li>
+                                    <li>View pending assessments</li>
+                                    <li>Review student's Part B answers</li>
+                                    <li>Assign marks out of 20</li>
+                                    <li>Submit grades</li>
+                                </ol>
+
+                                <h6 class="mt-4">Exam Result Management</h6>
+                                <ul>
+                                    <li>Review Part A (auto-graded) and Part B scores</li>
+                                    <li>Add internal assessment marks</li>
+                                    <li>Results automatically published after 3 hours</li>
+                                    <li>Certificates generated for passing students</li>
+                                </ul>
+
+                                <div class="alert alert-info">
+                                    <i class="fas fa-clock me-2"></i>
+                                    <strong>Grading Timeline:</strong> Internal assessments should be completed within 24 hours of exam completion.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analytics -->
+                    <div id="analytics" class="mb-5">
+                        <h5 class="text-success mb-3">
+                            <i class="fas fa-chart-bar me-2"></i>7. Analytics & Reports
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Course Analytics</h6>
+                                <ul>
+                                    <li><strong>Enrollment Statistics:</strong> Total enrollments, completion rates</li>
+                                    <li><strong>Lesson Analytics:</strong> Most/least watched lessons</li>
+                                    <li><strong>Quiz Performance:</strong> Average scores, difficult questions</li>
+                                    <li><strong>Student Engagement:</strong> Time spent, progress patterns</li>
+                                </ul>
+
+                                <h6 class="mt-4">Exam Analytics</h6>
+                                <ul>
+                                    <li><strong>Pass/Fail Rates:</strong> Overall exam performance</li>
+                                    <li><strong>Question Analysis:</strong> Most missed questions</li>
+                                    <li><strong>Time Analysis:</strong> Average completion times</li>
+                                    <li><strong>Score Distribution:</strong> Grade distribution charts</li>
+                                </ul>
+
+                                <h6 class="mt-4">Student Reports</h6>
+                                <ul>
+                                    <li>Individual student progress reports</li>
+                                    <li>Class performance summaries</li>
+                                    <li>Completion certificates tracking</li>
+                                    <li>Engagement metrics</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Best Practices -->
+                    <div id="best-practices" class="mb-5">
+                        <h5 class="text-success mb-3">
+                            <i class="fas fa-star me-2"></i>8. Best Practices
+                        </h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>Course Design</h6>
+                                        <ul>
+                                            <li>Structure content logically</li>
+                                            <li>Keep videos under 15 minutes</li>
+                                            <li>Provide clear learning objectives</li>
+                                            <li>Include practical examples</li>
+                                            <li>Add supplementary materials</li>
+                                        </ul>
+
+                                        <h6 class="mt-4">Student Engagement</h6>
+                                        <ul>
+                                            <li>Respond to student queries promptly</li>
+                                            <li>Provide constructive feedback</li>
+                                            <li>Monitor student progress regularly</li>
+                                            <li>Update content based on feedback</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>Assessment Design</h6>
+                                        <ul>
+                                            <li>Create varied question types</li>
+                                            <li>Test practical application</li>
+                                            <li>Provide clear instructions</li>
+                                            <li>Set appropriate difficulty levels</li>
+                                            <li>Include explanations for answers</li>
+                                        </ul>
+
+                                        <h6 class="mt-4">Quality Assurance</h6>
+                                        <ul>
+                                            <li>Review content for accuracy</li>
+                                            <li>Test all video links</li>
+                                            <li>Verify quiz functionality</li>
+                                            <li>Check material downloads</li>
+                                            <li>Update outdated information</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Support -->
+                    <div class="text-center">
+                        <div class="card bg-gradient-success text-white">
+                            <div class="card-body">
+                                <h5>Need Instructor Support?</h5>
+                                <p class="mb-3">Have questions about course creation or student management? We're here to help!</p>
+                                <a href="/help/contact" class="btn btn-light">
+                                    <i class="fas fa-envelope me-1"></i>Contact Support
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card.bg-gradient-success {
+        background: linear-gradient(45deg, #28a745, #1e7e34) !important;
+    }
+    
+    h5 {
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 10px;
+    }
+    
+    .alert {
+        border-left: 4px solid;
+    }
+    
+    .alert-info {
+        border-left-color: #17a2b8;
+    }
+    
+    .alert-success {
+        border-left-color: #28a745;
+    }
+    
+    .alert-warning {
+        border-left-color: #ffc107;
+    }
+    
+    .alert-danger {
+        border-left-color: #dc3545;
+    }
+</style>

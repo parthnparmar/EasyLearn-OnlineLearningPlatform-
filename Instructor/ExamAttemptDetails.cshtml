@@ -1,0 +1,235 @@
+@model EasyLearn.Models.ExamAttempt
+@{
+    ViewData["Title"] = "Exam Attempt Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">Exam Attempt Details</h5>
+                            <p class="text-sm mb-0">@Model.Student.FirstName @Model.Student.LastName - @Model.Exam.Title</p>
+                        </div>
+                        <div>
+                            @if (Model.ResultPublished)
+                            {
+                                @if (Model.IsPassed)
+                                {
+                                    <span class="badge bg-gradient-success">PASSED</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-gradient-danger">FAILED</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="badge bg-gradient-warning">PENDING GRADING</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Student Information -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0">Student Information</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Name:</strong> @Model.Student.FirstName @Model.Student.LastName</p>
+                                    <p><strong>Email:</strong> @Model.Student.Email</p>
+                                    <p><strong>Started At:</strong> @Model.StartedAt.ToString("dd MMM yyyy HH:mm")</p>
+                                    <p class="mb-0"><strong>Completed At:</strong> @(Model.CompletedAt?.ToString("dd MMM yyyy HH:mm") ?? "In Progress")</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-info">
+                                <div class="card-header bg-info text-white">
+                                    <h6 class="mb-0">Exam Information</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Exam:</strong> @Model.Exam.Title</p>
+                                    <p><strong>Course:</strong> @Model.Exam.Course.Title</p>
+                                    <p><strong>Exam Date:</strong> @Model.Exam.ScheduledStartTime.ToString("dd MMM yyyy")</p>
+                                    <p class="mb-0"><strong>Total Marks:</strong> @Model.Exam.TotalMarks</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (Model.ResultPublished)
+                    {
+                        <!-- Score Summary -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="card border-success">
+                                    <div class="card-body text-center">
+                                        <h4 class="text-success">@Model.PartAScore</h4>
+                                        <p class="mb-0">Part A Score</p>
+                                        <small class="text-muted">Out of @Model.Exam.PartAMarks</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card border-warning">
+                                    <div class="card-body text-center">
+                                        <h4 class="text-warning">@Model.PartBScore</h4>
+                                        <p class="mb-0">Part B Score</p>
+                                        <small class="text-muted">Out of @Model.Exam.PartBMarks</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card border-info">
+                                    <div class="card-body text-center">
+                                        <h4 class="text-info">@Model.InternalScore</h4>
+                                        <p class="mb-0">Internal Score</p>
+                                        <small class="text-muted">Out of @Model.Exam.InternalMarks</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card border-primary">
+                                    <div class="card-body text-center">
+                                        <h4 class="text-primary">@Model.TotalScore</h4>
+                                        <p class="mb-0">Total Score</p>
+                                        <small class="text-muted">@Model.Percentage.ToString("F1")%</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Part A Answers -->
+                    @{
+                        var partAQuestions = Model.Exam.ExamQuestions.Where(q => q.Part == EasyLearn.Models.ExamPart.PartA).OrderBy(q => q.OrderIndex).ToList();
+                        var partAAnswers = Model.ExamAnswers.Where(ea => partAQuestions.Select(q => q.Id).Contains(ea.ExamQuestionId)).ToList();
+                    }
+                    
+                    @if (partAQuestions.Any())
+                    {
+                        <div class="card mb-4">
+                            <div class="card-header bg-gradient-primary text-white">
+                                <h6 class="mb-0">Part A - Multiple Choice Questions</h6>
+                            </div>
+                            <div class="card-body">
+                                @for (int i = 0; i < partAQuestions.Count; i++)
+                                {
+                                    var question = partAQuestions[i];
+                                    var answer = partAAnswers.FirstOrDefault(a => a.ExamQuestionId == question.Id);
+                                    var selectedOption = answer?.SelectedOptionId != null ? question.Options.FirstOrDefault(o => o.Id == answer.SelectedOptionId) : null;
+                                    var correctOption = question.Options.FirstOrDefault(o => o.IsCorrect);
+                                    
+                                    <div class="question-item mb-3 p-3 border rounded">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h6 class="mb-0">
+                                                <span class="badge bg-primary me-2">Q@(i + 1)</span>
+                                                @question.Text
+                                            </h6>
+                                            @if (Model.ResultPublished)
+                                            {
+                                                @if (answer?.IsCorrect == true)
+                                                {
+                                                    <span class="badge bg-success">Correct (+@question.Points)</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">Incorrect (0)</span>
+                                                }
+                                            }
+                                        </div>
+                                        
+                                        <div class="options">
+                                            @foreach (var option in question.Options.OrderBy(o => o.OrderIndex))
+                                            {
+                                                <div class="form-check mb-1">
+                                                    <input class="form-check-input" type="radio" disabled 
+                                                           @(selectedOption?.Id == option.Id ? "checked" : "")>
+                                                    <label class="form-check-label @(Model.ResultPublished && option.IsCorrect ? "text-success fw-bold" : "") @(Model.ResultPublished && selectedOption?.Id == option.Id && !option.IsCorrect ? "text-danger" : "")">
+                                                        @option.Text
+                                                        @if (Model.ResultPublished && option.IsCorrect)
+                                                        {
+                                                            <i class="fas fa-check text-success ms-1"></i>
+                                                        }
+                                                    </label>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Part B Answers -->
+                    @{
+                        var partBQuestions = Model.Exam.ExamQuestions.Where(q => q.Part == EasyLearn.Models.ExamPart.PartB).OrderBy(q => q.OrderIndex).ToList();
+                        var partBAnswers = Model.ExamAnswers.Where(ea => partBQuestions.Select(q => q.Id).Contains(ea.ExamQuestionId)).ToList();
+                    }
+                    
+                    @if (partBQuestions.Any())
+                    {
+                        <div class="card mb-4">
+                            <div class="card-header bg-gradient-warning text-white">
+                                <h6 class="mb-0">Part B - Written Questions</h6>
+                            </div>
+                            <div class="card-body">
+                                @for (int i = 0; i < partBQuestions.Count; i++)
+                                {
+                                    var question = partBQuestions[i];
+                                    var answer = partBAnswers.FirstOrDefault(a => a.ExamQuestionId == question.Id);
+                                    
+                                    <div class="question-item mb-4 p-3 border rounded">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <h6 class="mb-0">
+                                                <span class="badge bg-warning me-2">Q@(i + 1)</span>
+                                                @question.Text
+                                            </h6>
+                                            @if (Model.ResultPublished)
+                                            {
+                                                <span class="badge bg-info">@(answer?.Points ?? 0)/@question.Points points</span>
+                                            }
+                                        </div>
+                                        
+                                        <div class="answer-section">
+                                            <h6 class="text-primary mb-2">Student's Answer:</h6>
+                                            <div class="answer-box p-3 bg-light border rounded">
+                                                @if (answer != null && !string.IsNullOrEmpty(answer.AnswerText))
+                                                {
+                                                    <p class="mb-0">@answer.AnswerText</p>
+                                                }
+                                                else
+                                                {
+                                                    <p class="text-muted mb-0"><em>No answer provided</em></p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <div class="text-center">
+                        @if (!Model.ResultPublished && Model.PartBCompleted)
+                        {
+                            <a href="/instructor/grade-part-b/@Model.Id" class="btn btn-warning btn-lg me-3">
+                                <i class="fas fa-edit me-2"></i>Grade Part B
+                            </a>
+                        }
+                        <a href="/instructor/internal-assessments" class="btn btn-primary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Assessments
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,153 @@
+@model EasyLearn.Models.ViewModels.ExamCreateViewModel
+@{
+    ViewData["Title"] = "Create Exam";
+    var course = ViewBag.Course as EasyLearn.Models.Course;
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h5 class="mb-0">Create Exam</h5>
+                            <p class="text-sm mb-0">Create an exam for @course?.Title</p>
+                        </div>
+                        <div class="ms-auto">
+                            <a href="/instructor/manage-exams/@ViewBag.CourseId" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Exams
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateExam" method="post">
+                        <input type="hidden" asp-for="CourseId" value="@ViewBag.CourseId" />
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="Title" class="form-control-label">Exam Title</label>
+                                    <input asp-for="Title" class="form-control" placeholder="Enter exam title" required>
+                                    <span asp-validation-for="Title" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="Description" class="form-control-label">Description</label>
+                                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Enter exam description"></textarea>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="ExamDate" class="form-control-label">Exam Date</label>
+                                    <input asp-for="ExamDate" type="datetime-local" class="form-control" required>
+                                    <span asp-validation-for="ExamDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="ExamSession" class="form-control-label">Exam Session</label>
+                                    <select asp-for="ExamSession" class="form-control" required>
+                                        <option value="">Select Session</option>
+                                        <option value="Morning">Morning (9:00 AM - 11:00 AM)</option>
+                                        <option value="Afternoon">Afternoon (2:00 PM - 4:00 PM)</option>
+                                        <option value="Evening">Evening (6:00 PM - 8:00 PM)</option>
+                                    </select>
+                                    <span asp-validation-for="ExamSession" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Exam Pattern Selection -->
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-control-label"><i class="fas fa-clipboard-list me-2"></i>Exam Pattern Type</label>
+                                    <select asp-for="PatternType" class="form-control" required>
+                                        <option value="3">Mixed (Theory + MCQ)</option>
+                                        <option value="1">Theory Only</option>
+                                        <option value="2">MCQ Only</option>
+                                    </select>
+                                    <small class="text-muted">Select the question format for this exam</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="InstructorInstructions" class="form-control-label"><i class="fas fa-bullhorn me-2"></i>Instructions to Students</label>
+                                    <textarea asp-for="InstructorInstructions" class="form-control" rows="4" placeholder="Enter important instructions about exam pattern, marking scheme, and guidelines..."></textarea>
+                                    <small class="text-muted">These instructions will be displayed to students before they start the exam</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Exam Pattern Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <h6><i class="fas fa-info-circle me-2"></i>Exam Pattern</h6>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <strong>Part A:</strong> 50 marks<br>
+                                            <small>Multiple Choice Questions (1 hour)</small>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>Part B:</strong> 30 marks<br>
+                                            <small>Written Answers (1 hour)</small>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>Internal:</strong> 20 marks<br>
+                                            <small>Assigned by instructor</small>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2">
+                                    <small><strong>Total:</strong> 100 marks | <strong>Duration:</strong> 2 hours | <strong>Passing:</strong> 75%</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between">
+                                    <a href="/instructor/manage-exams/@ViewBag.CourseId" class="btn btn-outline-secondary">
+                                        <i class="fas fa-times me-2"></i>Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-plus me-2"></i>Create Exam
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Set minimum date to today
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var yyyy = today.getFullYear();
+            var minDate = yyyy + '-' + mm + '-' + dd + 'T00:00';
+            
+            $('input[type="datetime-local"]').attr('min', minDate);
+        });
+    </script>
+}
