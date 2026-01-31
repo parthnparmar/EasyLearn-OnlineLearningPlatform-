@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Functionality Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/quiz-system.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Quiz Functionality Test</h4>
+                    </div>
+                    <div class="card-body">
+                        <h5>Test Instructions:</h5>
+                        <ol>
+                            <li>Login as a student: <strong>student@easylearn.com</strong> / <strong>Student123!</strong></li>
+                            <li>Navigate to the course: "Introduction to C# Programming"</li>
+                            <li>Enroll in the course if not already enrolled</li>
+                            <li>Take the quiz: "C# Basics Quiz"</li>
+                            <li>Test the following features:</li>
+                            <ul>
+                                <li>✅ Timer auto-starts when quiz loads</li>
+                                <li>✅ Review & Submit button works</li>
+                                <li>✅ Final Submit button works</li>
+                                <li>✅ New scoring system: +2 correct, -1 wrong, 0 unattempted</li>
+                                <li>✅ Score breakdown shows correct/wrong/unattempted counts</li>
+                                <li>✅ Detailed score calculation displayed</li>
+                                <li>✅ Pass/Fail status with proper scoring feedback</li>
+                            </ul>
+                        </ol>
+                        
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-info-circle me-2"></i>New Scoring System:</h6>
+                            <div class="row text-center mb-3">
+                                <div class="col-4">
+                                    <div class="p-2 border rounded">
+                                        <i class="fas fa-plus-circle text-success fa-2x mb-2"></i>
+                                        <br><strong class="text-success">+2 Points</strong>
+                                        <br><small>Correct Answer</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-2 border rounded">
+                                        <i class="fas fa-minus-circle text-danger fa-2x mb-2"></i>
+                                        <br><strong class="text-danger">-1 Point</strong>
+                                        <br><small>Wrong Answer</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-2 border rounded">
+                                        <i class="fas fa-circle text-muted fa-2x mb-2"></i>
+                                        <br><strong class="text-muted">0 Points</strong>
+                                        <br><small>Unattempted</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <ul class="mb-0">
+                                <li><strong>Total Questions:</strong> 25</li>
+                                <li><strong>Max Possible Score:</strong> 50 points (25 × 2)</li>
+                                <li><strong>Min Possible Score:</strong> -25 points (all wrong)</li>
+                                <li><strong>Passing Score:</strong> 70% of max possible</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-success">
+                            <h6><i class="fas fa-check-circle me-2"></i>Fixed Issues:</h6>
+                            <ul class="mb-0">
+                                <li>✅ Review and Submit button now works properly</li>
+                                <li>✅ New scoring system: +2 correct, -1 wrong, 0 unattempted</li>
+                                <li>✅ Enhanced score display with detailed breakdown</li>
+                                <li>✅ Proper event delegation for submit buttons</li>
+                                <li>✅ Improved quiz confirmation dialog with score preview</li>
+                                <li>✅ Updated result display with scoring explanation</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <a href="/Account/Login" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Start Testing
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
