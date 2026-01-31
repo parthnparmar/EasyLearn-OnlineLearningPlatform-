@@ -1,0 +1,459 @@
+/* Brain Games Comprehensive Styling */
+
+/* Common Game Card Styles */
+.game-card {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-color: #007bff;
+}
+
+/* Difficulty Badges */
+.badge-difficulty-easy {
+    background-color: #28a745 !important;
+    color: white;
+}
+
+.badge-difficulty-medium {
+    background-color: #ffc107 !important;
+    color: #000;
+}
+
+.badge-difficulty-hard {
+    background-color: #fd7e14 !important;
+    color: white;
+}
+
+.badge-difficulty-expert {
+    background-color: #dc3545 !important;
+    color: white;
+}
+
+/* Sudoku Specific Styles */
+.sudoku-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 1px;
+    background-color: #000;
+    border: 3px solid #000;
+    max-width: 450px;
+    margin: 0 auto;
+    aspect-ratio: 1;
+}
+
+.sudoku-cell {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    min-height: 45px;
+}
+
+.sudoku-cell:hover:not(.fixed-cell) {
+    background-color: #e3f2fd;
+}
+
+.sudoku-cell.selected {
+    background-color: #2196f3 !important;
+    color: white;
+}
+
+.sudoku-cell.fixed-cell {
+    background-color: #f5f5f5;
+    color: #333;
+    cursor: default;
+    font-weight: 900;
+}
+
+.sudoku-cell.error {
+    background-color: #ffebee;
+    color: #d32f2f;
+    animation: shake 0.5s ease-in-out;
+}
+
+.sudoku-cell.border-top-thick {
+    border-top: 3px solid #000;
+}
+
+.sudoku-cell.border-left-thick {
+    border-left: 3px solid #000;
+}
+
+.sudoku-grid.paused {
+    filter: blur(10px);
+    pointer-events: none;
+}
+
+.number-selector .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+}
+
+.number-selector .number-btn {
+    min-width: 45px;
+    height: 45px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.number-selector .number-btn.active {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+/* Memory Game Styles */
+.memory-grid {
+    display: grid;
+    gap: 10px;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.memory-grid.grid-2x2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.memory-grid.grid-3x2 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.memory-grid.grid-4x2 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.memory-grid.grid-4x3 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.memory-grid.grid-5x2 {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.memory-grid.grid-6x2 {
+    grid-template-columns: repeat(6, 1fr);
+}
+
+.memory-card {
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+    min-height: 80px;
+}
+
+.memory-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.memory-card.flipped {
+    background: white;
+    color: #333;
+    border-color: #007bff;
+    transform: rotateY(180deg);
+}
+
+.memory-card.matched {
+    background: #28a745;
+    color: white;
+    cursor: default;
+    animation: pulse 0.5s ease-in-out;
+}
+
+.memory-card.matched:hover {
+    transform: none;
+}
+
+/* Math Games Styles */
+.sequence-display {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+}
+
+.sequence-display h2 {
+    font-family: 'Courier New', monospace;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.answer-input input {
+    border: 3px solid #007bff;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 1rem;
+}
+
+.answer-input input:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Word Games Styles */
+.scrambled-word {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+}
+
+.scrambled-letters {
+    letter-spacing: 0.3em;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 3rem;
+    color: #d35400;
+}
+
+.letter-animation {
+    animation: letterBounce 0.6s ease-in-out;
+}
+
+/* Logic Games Styles */
+.logic-problem {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+}
+
+.clues-list .list-group-item {
+    border: none;
+    padding: 0.75rem 0;
+    background: transparent;
+    font-size: 1.1rem;
+}
+
+.solution-grid {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 12px;
+    border: 2px solid #dee2e6;
+}
+
+.solution-grid .form-select {
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    padding: 0.75rem;
+}
+
+.solution-grid .form-select:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Game Status Cards */
+.game-status-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+}
+
+.game-status-card .card-header {
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Animations */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes letterBounce {
+    0%, 20%, 60%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-15px); }
+    80% { transform: translateY(-7px); }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Game Controls */
+.game-controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.game-controls .btn {
+    min-width: 120px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.game-controls .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Timer Display */
+.timer-display {
+    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.timer-warning {
+    color: #ffc107 !important;
+    animation: pulse 1s infinite;
+}
+
+.timer-danger {
+    color: #dc3545 !important;
+    animation: pulse 0.5s infinite;
+}
+
+/* Score Display */
+.score-display {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.score-animation {
+    animation: scoreIncrease 0.5s ease-in-out;
+}
+
+@keyframes scoreIncrease {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sudoku-grid {
+        max-width: 320px;
+    }
+    
+    .sudoku-cell {
+        font-size: 1rem;
+        min-height: 35px;
+    }
+    
+    .memory-card {
+        font-size: 1.5rem;
+        min-height: 60px;
+    }
+    
+    .scrambled-letters {
+        font-size: 2rem;
+        letter-spacing: 0.2em;
+    }
+    
+    .game-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .game-controls .btn {
+        width: 100%;
+        max-width: 250px;
+    }
+}
+
+@media (max-width: 576px) {
+    .sudoku-grid {
+        max-width: 280px;
+    }
+    
+    .sudoku-cell {
+        font-size: 0.9rem;
+        min-height: 30px;
+    }
+    
+    .memory-card {
+        font-size: 1.2rem;
+        min-height: 50px;
+    }
+    
+    .scrambled-letters {
+        font-size: 1.5rem;
+    }
+    
+    .sequence-display h2 {
+        font-size: 1.8rem;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .sudoku-cell {
+        background-color: #2d3748;
+        color: #e2e8f0;
+    }
+    
+    .sudoku-cell.fixed-cell {
+        background-color: #4a5568;
+        color: #cbd5e0;
+    }
+    
+    .memory-card.flipped {
+        background: #2d3748;
+        color: #e2e8f0;
+    }
+    
+    .solution-grid {
+        background: #2d3748;
+        border-color: #4a5568;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .game-controls,
+    .btn,
+    .card-header {
+        display: none !important;
+    }
+    
+    .sudoku-grid,
+    .memory-grid {
+        break-inside: avoid;
+    }
+}

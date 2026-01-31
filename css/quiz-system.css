@@ -1,0 +1,478 @@
+/* Quiz System Styles */
+
+/* Quiz Timer Styles */
+.quiz-timer {
+    position: sticky;
+    top: 20px;
+    z-index: 1000;
+}
+
+.timer-warning {
+    animation: pulse 1s infinite;
+}
+
+.timer-critical {
+    animation: shake 0.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
+}
+
+/* Quiz Navigation */
+.question-navigator .nav-btn {
+    transition: all 0.3s ease;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.question-navigator .nav-btn:hover {
+    transform: scale(1.1);
+}
+
+.question-navigator .nav-btn.btn-success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border-color: #28a745;
+}
+
+.question-navigator .nav-btn.btn-primary {
+    background: linear-gradient(135deg, #007bff, #6610f2);
+    border-color: #007bff;
+}
+
+/* Quiz Questions */
+.question-slide {
+    transition: all 0.3s ease;
+}
+
+.question-slide .card {
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.question-slide .form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.question-slide .form-check-label {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.question-slide .form-check-label:hover {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+/* True/False Question Styles */
+.true-false-option {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.true-false-option:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.true-false-option input[type="radio"]:checked + label .p-3 {
+    background-color: #007bff !important;
+    color: white;
+}
+
+/* Progress Bar Enhancements */
+.quiz-progress {
+    height: 8px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #e9ecef 0%, #dee2e6 100%);
+}
+
+.quiz-progress .progress-bar {
+    border-radius: 10px;
+    background: linear-gradient(90deg, #007bff 0%, #6610f2 100%);
+    transition: width 0.5s ease;
+}
+
+/* Quiz Result Scoreboard */
+.scoreboard {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 2rem 0;
+}
+
+.score-display {
+    font-size: 4rem;
+    font-weight: 900;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.score-label {
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Certificate Unlock Animation */
+.certificate-unlock {
+    animation: certificateGlow 2s ease-in-out infinite;
+}
+
+@keyframes certificateGlow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(40, 167, 69, 0.8), 0 0 30px rgba(40, 167, 69, 0.6);
+    }
+}
+
+/* Modern Button Styles */
+.btn-modern {
+    border-radius: 25px;
+    padding: 12px 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-modern:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-modern:hover:before {
+    left: 100%;
+}
+
+.btn-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Quiz Status Badges */
+.status-badge {
+    font-size: 1.1rem;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.status-passed {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.status-failed {
+    background: linear-gradient(135deg, #dc3545, #fd7e14);
+    color: white;
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .score-display {
+        font-size: 2.5rem;
+    }
+    
+    .question-navigator .nav-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+    
+    .scoreboard {
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+}
+
+/* Loading Animation */
+.quiz-loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(0, 123, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #007bff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Success Animations */
+.success-bounce {
+    animation: bounce 0.6s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 20%, 53%, 80%, 100% {
+        transform: translate3d(0, 0, 0);
+    }
+    40%, 43% {
+        transform: translate3d(0, -10px, 0);
+    }
+    70% {
+        transform: translate3d(0, -5px, 0);
+    }
+    90% {
+        transform: translate3d(0, -2px, 0);
+    }
+}
+
+/* Fade In Animation */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Quiz Card Hover Effects */
+.quiz-card {
+    transition: all 0.3s ease;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.quiz-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Custom Scrollbar for Quiz Content */
+.quiz-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.quiz-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.quiz-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #007bff, #6610f2);
+    border-radius: 10px;
+}
+
+.quiz-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #0056b3, #520dc2);
+}
+
+/* Enhanced Submit Button Styles */
+#review-submit-btn, #final-submit-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border-radius: 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#review-submit-btn:hover, #final-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+}
+
+#review-submit-btn:before, #final-submit-btn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+#review-submit-btn:hover:before, #final-submit-btn:hover:before {
+    left: 100%;
+}
+
+/* Button Click Effect */
+#review-submit-btn:active, #final-submit-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(40, 167, 69, 0.3);
+}
+
+/* Submit Button Loading State */
+.btn-submitting {
+    pointer-events: none;
+    opacity: 0.7;
+    position: relative;
+}
+
+.btn-submitting:after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* Quiz Timer Enhanced Styles */
+.quiz-timer {
+    position: sticky;
+    top: 20px;
+    z-index: 1000;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-weight: 600;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Auto-start Timer Notification */
+.timer-started {
+    animation: timerStart 1s ease-in-out;
+}
+
+@keyframes timerStart {
+    0% {
+        transform: scale(1);
+        background-color: #ffc107;
+    }
+    50% {
+        transform: scale(1.05);
+        background-color: #28a745;
+    }
+    100% {
+        transform: scale(1);
+        background-color: #ffc107;
+    }
+}
+
+/* Enhanced Timer Auto-Start Effect */
+.quiz-timer.timer-started {
+    animation: timerAutoStart 2s ease-in-out;
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.6);
+}
+
+@keyframes timerAutoStart {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 5px rgba(255, 193, 7, 0.3);
+    }
+    25% {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(40, 167, 69, 0.6);
+        background-color: #28a745;
+    }
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 0 20px rgba(255, 193, 7, 0.8);
+        background-color: #ffc107;
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Quiz Loading States */
+.quiz-submitting {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.quiz-submitting .btn {
+    position: relative;
+}
+
+.quiz-submitting .btn:after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* Enhanced Question Navigation */
+.question-navigator {
+    position: sticky;
+    top: 100px;
+    z-index: 100;
+}
+
+.nav-btn.answered {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    border-color: #28a745 !important;
+    color: white !important;
+}
+
+.nav-btn.current {
+    background: linear-gradient(135deg, #007bff, #6610f2) !important;
+    border-color: #007bff !important;
+    color: white !important;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* Responsive Enhancements */
+@media (max-width: 768px) {
+    .quiz-timer {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        left: auto;
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .question-navigator {
+        position: static;
+        margin-bottom: 20px;
+    }
+    
+    #review-submit-btn, #final-submit-btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+}

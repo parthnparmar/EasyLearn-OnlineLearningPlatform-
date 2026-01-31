@@ -1,0 +1,222 @@
+/* Browse Courses High Contrast Styles */
+
+/* Search and Filter Section */
+.card .card-body {
+    background-color: #f8f9fa;
+    border: 2px solid #e9ecef;
+}
+
+.form-label {
+    color: #1a1a1a !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.form-control, .form-select {
+    border: 2px solid #ced4da;
+    color: #1a1a1a !important;
+    background-color: #ffffff;
+    font-weight: 500;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+    color: #1a1a1a !important;
+}
+
+.form-control::placeholder {
+    color: #666666 !important;
+}
+
+/* Course Cards */
+.course-card {
+    background: #ffffff;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.course-card:hover {
+    border-color: #0056b3;
+    box-shadow: 0 8px 25px rgba(0, 86, 179, 0.15);
+    transform: translateY(-3px);
+}
+
+.course-card .card-title {
+    color: #1a1a1a !important;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.course-card .card-text {
+    color: #333333 !important;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.course-card .text-muted {
+    color: #666666 !important;
+    font-weight: 500;
+}
+
+.course-card .badge {
+    font-weight: 600;
+    padding: 0.4em 0.8em;
+    font-size: 0.8rem;
+}
+
+.course-card .badge.bg-secondary {
+    background-color: #495057 !important;
+    color: #ffffff !important;
+}
+
+.course-card .badge.bg-warning {
+    background-color: #ffc107 !important;
+    color: #1a1a1a !important;
+}
+
+/* Rating Stars */
+.text-warning {
+    color: #ff8c00 !important;
+}
+
+.fas.fa-star {
+    color: #ff8c00 !important;
+}
+
+.fas.fa-star-o {
+    color: #cccccc !important;
+}
+
+/* Price Display */
+.text-success {
+    color: #0f5132 !important;
+    font-weight: 700;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    color: #ffffff;
+    font-weight: 600;
+    border-width: 2px;
+}
+
+.btn-primary:hover {
+    background-color: #004085;
+    border-color: #004085;
+    color: #ffffff;
+}
+
+.btn-outline-secondary {
+    color: #495057;
+    border-color: #495057;
+    background-color: transparent;
+    font-weight: 600;
+    border-width: 2px;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #495057;
+    border-color: #495057;
+    color: #ffffff;
+}
+
+.btn-outline-secondary.active {
+    background-color: #495057;
+    border-color: #495057;
+    color: #ffffff;
+}
+
+/* Results Summary */
+.text-muted {
+    color: #666666 !important;
+    font-weight: 500;
+}
+
+/* Pagination */
+.pagination .page-link {
+    color: #0056b3;
+    background-color: #ffffff;
+    border: 2px solid #dee2e6;
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    color: #ffffff;
+}
+
+.pagination .page-link:hover {
+    color: #004085;
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+}
+
+/* List View Styles */
+.card.mb-3 {
+    border: 2px solid #e9ecef;
+    background: #ffffff;
+}
+
+.card.mb-3:hover {
+    border-color: #0056b3;
+    box-shadow: 0 4px 15px rgba(0, 86, 179, 0.1);
+}
+
+/* No Results Message */
+.text-center .fa-4x {
+    color: #666666 !important;
+}
+
+.text-center h4 {
+    color: #1a1a1a !important;
+    font-weight: 600;
+}
+
+/* Breadcrumb */
+.breadcrumb-item a {
+    color: #0056b3 !important;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: #004085 !important;
+    text-decoration: underline;
+}
+
+.breadcrumb-item.active {
+    color: #666666 !important;
+    font-weight: 500;
+}
+
+/* Icons */
+.fas, .fab {
+    color: inherit;
+}
+
+/* Course Image Placeholder */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #0056b3 0%, #004085 100%) !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .course-card .card-title {
+        font-size: 1rem;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+    }
+    
+    .btn {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
