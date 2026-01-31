@@ -1,0 +1,386 @@
+@model List<EasyLearn.Models.ExamSchedule>
+@{
+    ViewData["Title"] = "My Exams";
+    var examAttempts = ViewBag.ExamAttempts as List<EasyLearn.Models.ExamAttempt> ?? new List<EasyLearn.Models.ExamAttempt>();
+    var reExamPayments = ViewBag.ReExamPayments as List<EasyLearn.Models.ReExamPayment> ?? new List<EasyLearn.Models.ReExamPayment>();
+    var examService = ViewBag.ExamService as EasyLearn.Services.IExamService;
+    var studentId = ViewBag.StudentId as string ?? "";
+    var completedEnrollments = ViewBag.CompletedEnrollments as List<EasyLearn.Models.Enrollment> ?? new List<EasyLearn.Models.Enrollment>();
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">My Exams</h5>
+                            <p class="text-sm mb-0">View your scheduled exams and results</p>
+                        </div>
+                        <div>
+                            <a href="/student/exam-results" class="btn btn-outline-success btn-sm me-2">
+                                <i class="fas fa-trophy me-1"></i>View All Results
+                            </a>
+                            <a href="/student/dashboard" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-home me-1"></i>Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (TempData["ShowReExamPayment"] != null)
+                    {
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <strong>Exam Time Over!</strong> You can retake the exam by paying the re-exam fee.
+                            <a href="/student/re-exam-payment/@TempData["ShowReExamPayment"]" class="btn btn-sm btn-warning ms-2">Pay Re-exam Fee (₹200)</a>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <!-- Scheduled Exams -->
+                    <div class="row">
+                        <div class="col-12">
+                            <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">Scheduled Exams by Course</h6>
+                            @if (Model.Any())
+                            {
+                                @foreach (var courseGroup in Model.GroupBy(s => s.Exam.CourseId))
+                                {
+                                    var course = courseGroup.First().Exam.Course;
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">
+                                                <i class="fas fa-book me-2"></i>@course.Title
+                                                <span class="badge bg-gradient-info ms-2">@courseGroup.Count() Exam(s)</span>
+                                            </h6>
+                                            <small class="text-muted">@course.Category.Name | Instructor: @course.Instructor.FirstName @course.Instructor.LastName</small>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                @foreach (var schedule in courseGroup)
+                                                {
+                                                    var timeStatus = await examService.GetExamTimeStatusAsync(schedule.ExamId, studentId);
+                                                    var isExamAvailable = await examService.IsExamAvailableForStudentAsync(studentId, schedule.ExamId);
+                                                    var attempt = examAttempts.FirstOrDefault(ea => ea.ExamId == schedule.ExamId);
+                                                    var hasFailedAttempt = attempt != null && !attempt.IsPassed && attempt.ResultPublished;
+                                                    var hasPaidReExam = hasFailedAttempt && reExamPayments.Any(rep => rep.ExamAttemptId == attempt.Id);
+                                                    
+                                                    // Calculate exam timing
+                                                    var examStart = schedule.ScheduledDate.Date.AddHours(
+                                                        schedule.Session.ToLower() switch {
+                                                            "morning" => 9,
+                                                            "afternoon" => 14,
+                                                            "evening" => 18,
+                                                            _ => 9
+                                                        });
+                                                    var examEnd = examStart.AddMinutes(schedule.Exam.DurationMinutes);
+                                                    var now = DateTime.UtcNow;
+
+                                                    <div class="col-lg-6 col-md-12 mb-3">
+                                                        <div class="card h-100 border" 
+                                                             data-exam-date="@schedule.ScheduledDate.ToString("yyyy-MM-dd")" 
+                                                             data-exam-session="@schedule.Session" 
+                                                             data-exam-duration="@schedule.Exam.DurationMinutes">
+                                                            <div class="card-body">
+                                                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                                                    <div>
+                                                                        <h6 class="mb-1">@schedule.Exam.Title</h6>
+                                                                        <p class="text-sm text-muted mb-0">@schedule.Exam.Description</p>
+                                                                    </div>
+                                                                    @if (isExamAvailable)
+                                                                    {
+                                                                        <span class="badge bg-success">Available Now</span>
+                                                                    }
+                                                                    else if (now > examEnd)
+                                                                    {
+                                                                        <span class="badge bg-danger">Expired</span>
+                                                                    }
+                                                                    else if (now < examStart)
+                                                                    {
+                                                                        <span class="badge bg-info">Upcoming</span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="badge bg-warning">Not Available</span>
+                                                                    }
+                                                                </div>
+
+                                                                <div class="row text-center mb-3">
+                                                                    <div class="col-4">
+                                                                        <div class="border-end">
+                                                                            <h6 class="text-primary mb-0">@schedule.ScheduledDate.ToString("MMM dd")</h6>
+                                                                            <p class="text-xs text-muted mb-0">Your Date</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-4">
+                                                                        <div class="border-end">
+                                                                            <h6 class="text-info mb-0">@schedule.Session</h6>
+                                                                            <p class="text-xs text-muted mb-0">Session</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-4">
+                                                                        <h6 class="text-warning mb-0">@schedule.Exam.DurationMinutes min</h6>
+                                                                        <p class="text-xs text-muted mb-0">Duration</p>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="exam-pattern mb-3">
+                                                                    <small class="text-muted">
+                                                                        <strong>Pattern:</strong> Part A (@schedule.Exam.PartAMarks marks, MCQs) + Part B (@schedule.Exam.PartBMarks marks, Written) + Internal (@schedule.Exam.InternalMarks marks)
+                                                                    </small>
+                                                                </div>
+
+                                                                <div class="time-status mb-3">
+                                                                    <div class="alert @(timeStatus.Contains("not available") || timeStatus.Contains("not assigned") ? "alert-danger" : timeStatus.Contains("progress") ? "alert-success" : "alert-light") py-2 mb-0">
+                                                                        <i class="fas fa-clock me-2"></i>
+                                                                        <strong>Status:</strong> @timeStatus
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    @if (!isExamAvailable && now < examStart)
+                                                                    {
+                                                                        <button class="btn btn-secondary btn-sm" disabled>
+                                                                            <i class="fas fa-clock me-2"></i>Not Yet Available
+                                                                        </button>
+                                                                    }
+                                                                    else if (!isExamAvailable && now > examEnd)
+                                                                    {
+                                                                        @if (hasFailedAttempt && !hasPaidReExam)
+                                                                        {
+                                                                            <a href="/student/re-exam-payment/@attempt.Id" class="btn btn-danger btn-sm">
+                                                                                <i class="fas fa-redo me-2"></i>Pay Re-exam (₹200)
+                                                                            </a>
+                                                                        }
+                                                                        else if (hasFailedAttempt && hasPaidReExam)
+                                                                        {
+                                                                            <a href="/student/take-exam/@schedule.ExamId" class="btn btn-warning btn-sm">
+                                                                                <i class="fas fa-redo me-2"></i>Retake Exam
+                                                                            </a>
+                                                                        }
+                                                                        else if (attempt == null)
+                                                                        {
+                                                                            <a href="/student/request-missed-exam/@schedule.ExamId" class="btn btn-warning btn-sm">
+                                                                                <i class="fas fa-exclamation-triangle me-2"></i>Request Missed Exam
+                                                                            </a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <button class="btn btn-secondary btn-sm" disabled>
+                                                                                <i class="fas fa-times me-2"></i>Exam Expired
+                                                                            </button>
+                                                                        }
+                                                                    }
+                                                                    else if (attempt == null && isExamAvailable)
+                                                                    {
+                                                                        <a href="/student/take-exam/@schedule.ExamId" class="btn btn-success btn-sm">
+                                                                            <i class="fas fa-play me-2"></i>Start Exam
+                                                                        </a>
+                                                                    }
+                                                                    else if (attempt != null && !attempt.IsCompleted && isExamAvailable)
+                                                                    {
+                                                                        <a href="/student/take-exam/@schedule.ExamId" class="btn btn-warning btn-sm">
+                                                                            <i class="fas fa-resume me-2"></i>Resume Exam
+                                                                        </a>
+                                                                    }
+                                                                    else if (attempt != null && attempt.IsCompleted)
+                                                                    {
+                                                                        <a href="/student/exam-result/@attempt.Id" class="btn btn-info btn-sm">
+                                                                            <i class="fas fa-chart-line me-2"></i>View Result
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <button class="btn btn-secondary btn-sm" disabled>
+                                                                            <i class="fas fa-ban me-2"></i>Not Available
+                                                                        </button>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-center py-5">
+                                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No Exams Assigned</h5>
+                                    <p class="text-sm text-muted">Your instructor needs to assign exam dates to you.</p>
+                                    <div class="alert alert-info mt-3">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <strong>New User Rule:</strong> Instructors must assign specific exam dates and sessions to students. 
+                                        Contact your instructor to get exam access.
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Exam Results -->
+                    @if (examAttempts.Any())
+                    {
+                        <hr class="my-4">
+                        <div class="row">
+                            <div class="col-12">
+                                <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">Exam Results</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-flush">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>Course</th>
+                                                <th>Exam Date</th>
+                                                <th>Part A</th>
+                                                <th>Part B</th>
+                                                <th>Internal</th>
+                                                <th>Total</th>
+                                                <th>Result</th>
+                                                <th>Certificate</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var attempt in examAttempts.Where(ea => ea.ResultPublished))
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <h6 class="mb-0 text-sm">@attempt.Exam.Course.Title</h6>
+                                                        <p class="text-xs text-secondary mb-0">@attempt.CompletedAt?.ToString("MMM dd, yyyy")</p>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-sm">@attempt.Exam.ScheduledStartTime.ToString("MMM dd, yyyy")</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-sm font-weight-bold">@attempt.PartAScore/50</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-sm font-weight-bold">@attempt.PartBScore/30</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-sm font-weight-bold">@attempt.InternalScore/20</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-sm font-weight-bold">@attempt.TotalScore/100</span><br>
+                                                        <span class="text-xs text-secondary">@attempt.Percentage.ToString("F1")%</span>
+                                                    </td>
+                                                    <td>
+                                                        @if (attempt.IsPassed)
+                                                        {
+                                                            <span class="badge badge-sm bg-gradient-success">PASS</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge badge-sm bg-gradient-danger">FAIL</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (attempt.IsPassed && attempt.ExamCertificate != null)
+                                                        {
+                                                            <a href="/student/download-exam-certificate/@attempt.Id" class="btn btn-link text-success px-3 mb-0">
+                                                                <i class="fas fa-download me-2"></i>Download
+                                                            </a>
+                                                        }
+                                                        else if (!attempt.IsPassed)
+                                                        {
+                                                            <span class="text-xs text-muted">Not Available</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-xs text-warning">Processing...</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Function to update exam timers in real-time
+            function updateExamTimers() {
+                $('.time-status').each(function() {
+                    var timeStatusDiv = $(this);
+                    var examCard = timeStatusDiv.closest('.card[data-exam-date]');
+                    
+                    if (examCard.length === 0) return;
+                    
+                    // Get exam schedule data from data attributes
+                    var examDateStr = examCard.data('exam-date'); // e.g., "2026-01-09"
+                    var session = examCard.data('exam-session'); // e.g., "Morning"
+                    var duration = examCard.data('exam-duration'); // e.g., 120
+                    
+                    // Construct exam start time
+                    var examDate = new Date(examDateStr);
+                    
+                    // Set exam start time based on session
+                    var sessionHour = 9; // Default to morning
+                    switch(session.toLowerCase()) {
+                        case 'morning':
+                            sessionHour = 9;
+                            break;
+                        case 'afternoon':
+                            sessionHour = 14;
+                            break;
+                        case 'evening':
+                            sessionHour = 18;
+                            break;
+                    }
+                    
+                    examDate.setHours(sessionHour, 0, 0, 0);
+                    var examEnd = new Date(examDate.getTime() + (duration * 60 * 1000));
+                    var now = new Date();
+                    
+                    var alertDiv = timeStatusDiv.find('.alert');
+                    var badge = examCard.find('.badge').first();
+                    
+                    if (now < examDate) {
+                        // Exam hasn't started yet
+                        var timeDiff = examDate - now;
+                        var days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                        var hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        var minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                        
+                        var statusText = 'Exam starts in ' + days + 'd ' + hours + 'h ' + minutes + 'm';
+                        alertDiv.removeClass('alert-success alert-danger').addClass('alert-light');
+                        alertDiv.html('<i class="fas fa-clock me-2"></i><strong>Status:</strong> ' + statusText);
+                        badge.removeClass('bg-success bg-danger').addClass('bg-info').text('Upcoming');
+                        
+                    } else if (now >= examDate && now <= examEnd) {
+                        // Exam is in progress
+                        var timeRemaining = examEnd - now;
+                        var hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+                        var minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                        
+                        var statusText = 'Exam in progress - ' + hours + 'h ' + minutes + 'm remaining';
+                        alertDiv.removeClass('alert-light alert-danger').addClass('alert-success');
+                        alertDiv.html('<i class="fas fa-clock me-2"></i><strong>Status:</strong> ' + statusText);
+                        badge.removeClass('bg-info bg-danger').addClass('bg-success').text('Available Now');
+                        
+                    } else {
+                        // Exam has ended
+                        alertDiv.removeClass('alert-light alert-success').addClass('alert-danger');
+                        alertDiv.html('<i class="fas fa-clock me-2"></i><strong>Status:</strong> Exam time is over');
+                        badge.removeClass('bg-info bg-success').addClass('bg-danger').text('Expired');
+                    }
+                });
+            }
+            
+            // Update timers immediately and then every 30 seconds for real-time updates
+            updateExamTimers();
+            setInterval(updateExamTimers, 30000);
+        });
+    </script>
+}

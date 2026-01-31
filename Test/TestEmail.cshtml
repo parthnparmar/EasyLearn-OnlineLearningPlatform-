@@ -1,0 +1,71 @@
+@{
+    ViewData["Title"] = "Test Email";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-envelope"></i> Test Email Functionality</h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> @TempData["Success"]
+                        </div>
+                    }
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle"></i> @TempData["Error"]
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <h5>Email Configuration Status</h5>
+                        @if (ViewBag.IsConfigured)
+                        {
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle"></i> Email service is properly configured
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle"></i> Email service is NOT configured
+                                <hr>
+                                <strong>To configure email:</strong>
+                                <ol>
+                                    <li>Update <code>appsettings.json</code> with your email settings</li>
+                                    <li>For Gmail: Enable 2FA and generate an App Password</li>
+                                    <li>Use the App Password (not your regular password)</li>
+                                </ol>
+                            </div>
+                        }
+                    </div>
+
+                    @if (ViewBag.IsConfigured)
+                    {
+                        <form method="post" action="/test/send-test-email">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Test Email Address</label>
+                                <input type="email" class="form-control" id="email" name="email" required 
+                                       placeholder="Enter email to send test to">
+                            </div>
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Test Name</label>
+                                <input type="text" class="form-control" id="name" name="name" required 
+                                       placeholder="Enter test name">
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Send Test Email
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

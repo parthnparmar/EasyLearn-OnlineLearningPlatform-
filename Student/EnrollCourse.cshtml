@@ -1,0 +1,91 @@
+@model EasyLearn.Models.ViewModels.EnrollmentViewModel
+@{
+    ViewData["Title"] = "Enroll in Course";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-graduation-cap me-2"></i>Course Enrollment</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Course Information -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            @if (!string.IsNullOrEmpty(Model.Course.ThumbnailUrl))
+                            {
+                                <img src="@Model.Course.ThumbnailUrl" alt="@Model.Course.Title" class="img-fluid rounded">
+                            }
+                            else
+                            {
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 150px;">
+                                    <i class="fas fa-play-circle fa-3x text-muted"></i>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-8">
+                            <h5>@Model.Course.Title</h5>
+                            <p class="text-muted">@Model.Course.Description</p>
+                            <p><strong>Instructor:</strong> @Model.Course.Instructor.FirstName @Model.Course.Instructor.LastName</p>
+                            <p><strong>Category:</strong> @Model.Course.Category.Name</p>
+                            <h4 class="text-success">
+                                <span class="badge bg-success fs-5">FREE COURSE</span>
+                            </h4>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Enrollment Form -->
+                    <form asp-action="ProcessEnrollment" method="post">
+                        <input type="hidden" asp-for="CourseId" />
+                        
+                        <h5 class="mb-3">Student Information</h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="StudentName" class="form-label">Full Name *</label>
+                                <input asp-for="StudentName" class="form-control" placeholder="Enter your full name" />
+                                <span asp-validation-for="StudentName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="StudentEmail" class="form-label">Email Address *</label>
+                                <input asp-for="StudentEmail" class="form-control" placeholder="Enter your email" />
+                                <span asp-validation-for="StudentEmail" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="StudentPhone" class="form-label">Phone Number</label>
+                            <input asp-for="StudentPhone" class="form-control" placeholder="Enter your phone number (optional)" />
+                            <span asp-validation-for="StudentPhone" class="text-danger"></span>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Free Course Enrollment</strong>
+                            <br>
+                            <small>This course is completely free! Certificates and exams require separate payment after enrollment.</small>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="CourseDetails" asp-route-id="@Model.CourseId" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Course
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-graduation-cap me-1"></i>
+                                <span>Enroll Now (FREE)</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

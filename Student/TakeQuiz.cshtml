@@ -1,0 +1,176 @@
+@model EasyLearn.Models.Quiz
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-question-circle"></i> @Model.Title
+                    </h3>
+                    <p class="mb-0">@Model.Description</p>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Total Questions:</strong> @Model.Questions.Count
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Time Limit:</strong> @Model.TimeLimit minutes
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Passing Score:</strong> @Model.PassingScore%
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Course:</strong> @Model.Course.Title
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-controller="Student" asp-action="SubmitQuiz" method="post" id="quizForm">
+                        <input type="hidden" name="quizId" value="@Model.Id" />
+                        
+                        @for (int i = 0; i < Model.Questions.Count; i++)
+                        {
+                            var question = Model.Questions.ElementAt(i);
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0">
+                                        Question @(i + 1) 
+                                        <span class="badge bg-secondary">@question.Points points</span>
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text">@question.Text</p>
+                                    
+                                    @if (question.Type == QuestionType.MultipleChoice)
+                                    {
+                                        <div class="form-group">
+                                            @foreach (var answer in question.Answers.OrderBy(a => a.OrderIndex))
+                                            {
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="radio" 
+                                                           name="question_@question.Id" 
+                                                           id="answer_@answer.Id" 
+                                                           value="@answer.Id">
+                                                    <label class="form-check-label" for="answer_@answer.Id">
+                                                        @answer.Text
+                                                    </label>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                    else if (question.Type == QuestionType.TrueFalse)
+                                    {
+                                        <div class="form-group">
+                                            @foreach (var answer in question.Answers.OrderBy(a => a.OrderIndex))
+                                            {
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="radio" 
+                                                           name="question_@question.Id" 
+                                                           id="answer_@answer.Id" 
+                                                           value="@answer.Id">
+                                                    <label class="form-check-label" for="answer_@answer.Id">
+                                                        @answer.Text
+                                                    </label>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                    else if (question.Type == QuestionType.ShortAnswer)
+                                    {
+                                        <div class="form-group">
+                                            <textarea class="form-control" 
+                                                      name="question_@question.Id" 
+                                                      rows="3" 
+                                                      placeholder="Enter your answer here..."></textarea>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                                <i class="fas fa-paper-plane"></i> Submit Quiz
+                            </button>
+                            <a href="@Url.Action("CourseDetails", new { id = Model.CourseId })" class="btn btn-secondary btn-lg ms-2">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var timeLimit = @Model.TimeLimit; // in minutes
+            var startTime = new Date().getTime();
+            var endTime = startTime + (timeLimit * 60 * 1000);
+            
+            // Timer display
+            if (timeLimit > 0) {
+                var timerHtml = '<div class="alert alert-warning text-center" id="timer">' +
+                               '<h5><i class="fas fa-clock"></i> Time Remaining: <span id="timeDisplay"></span></h5>' +
+                               '</div>';
+                $('.card-body').prepend(timerHtml);
+                
+                var timer = setInterval(function() {
+                    var now = new Date().getTime();
+                    var distance = endTime - now;
+                    
+                    if (distance < 0) {
+                        clearInterval(timer);
+                        $('#timeDisplay').text('Time Up!');
+                        $('#timer').removeClass('alert-warning').addClass('alert-danger');
+                        $('#submitBtn').click();
+                        return;
+                    }
+                    
+                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    
+                    $('#timeDisplay').text(minutes + "m " + seconds + "s");
+                    
+                    // Warning when 5 minutes left
+                    if (distance < 5 * 60 * 1000) {
+                        $('#timer').removeClass('alert-warning').addClass('alert-danger');
+                    }
+                }, 1000);
+            }
+            
+            // Form submission confirmation
+            $('#quizForm').submit(function(e) {
+                var unanswered = 0;
+                $('input[type="radio"]').each(function() {
+                    var name = $(this).attr('name');
+                    if ($('input[name="' + name + '"]:checked').length === 0) {
+                        unanswered++;
+                    }
+                });
+                
+                if (unanswered > 0) {
+                    if (!confirm('You have ' + unanswered + ' unanswered questions. Are you sure you want to submit?')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+                
+                $('#submitBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Submitting...');
+            });
+            
+            // Auto-save progress (optional)
+            $('input[type="radio"], textarea').change(function() {
+                // Could implement auto-save functionality here
+            });
+        });
+    </script>
+}

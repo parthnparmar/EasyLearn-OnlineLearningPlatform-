@@ -1,0 +1,122 @@
+@model List<EasyLearn.Models.ExamAttempt>
+@{
+    ViewData["Title"] = "My Exam Results";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">My Exam Results</h5>
+                            <p class="text-sm mb-0">View all your completed exam results</p>
+                        </div>
+                        <a href="/student/my-exams" class="btn btn-primary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to My Exams
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Exam</th>
+                                        <th>Course</th>
+                                        <th>Date</th>
+                                        <th>Score</th>
+                                        <th>Percentage</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var attempt in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@attempt.Exam.Title</strong>
+                                            </td>
+                                            <td>@attempt.Exam.Course.Title</td>
+                                            <td>@attempt.CompletedAt?.ToString("dd MMM yyyy")</td>
+                                            <td>
+                                                @if (attempt.ResultPublished)
+                                                {
+                                                    <span>@attempt.TotalScore/@attempt.Exam.TotalMarks</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Pending</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (attempt.ResultPublished)
+                                                {
+                                                    <span class="fw-bold">@attempt.Percentage.ToString("F1")%</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (attempt.ResultPublished)
+                                                {
+                                                    @if (attempt.IsPassed)
+                                                    {
+                                                        <span class="badge bg-success">Passed</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-danger">Failed</span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning">Under Review</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a href="/student/exam-result/@attempt.Id" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye me-1"></i>View
+                                                </a>
+                                                @if (attempt.ResultPublished && attempt.IsPassed && attempt.ExamCertificate != null)
+                                                {
+                                                    <a href="/student/download-exam-certificate/@attempt.Id" class="btn btn-sm btn-success ms-1">
+                                                        <i class="fas fa-download me-1"></i>Certificate
+                                                    </a>
+                                                }
+                                                @if (attempt.ResultPublished && !attempt.IsPassed)
+                                                {
+                                                    <a href="/student/re-exam-payment/@attempt.Id" class="btn btn-sm btn-warning ms-1">
+                                                        <i class="fas fa-redo me-1"></i>Re-exam
+                                                    </a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-clipboard-list fa-4x text-muted mb-3"></i>
+                            <h4 class="text-muted">No Exam Results Found</h4>
+                            <p class="text-muted">You haven't completed any exams yet.</p>
+                            <a href="/student/my-exams" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Take an Exam
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

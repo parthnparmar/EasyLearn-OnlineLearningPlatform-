@@ -1,0 +1,116 @@
+@model EasyLearn.Models.ViewModels.CertificatePaymentConfirmationViewModel
+@{
+    ViewData["Title"] = "Payment Successful";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white text-center">
+                    <h4 class="mb-0"><i class="fas fa-check-circle"></i> Payment Successful!</h4>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-certificate text-success" style="font-size: 4rem;"></i>
+                        <h5 class="mt-3">Certificate & Exam Access Activated</h5>
+                        <p class="text-muted">You now have full access to exams and certificates for this course.</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Payment Details</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Receipt Number:</strong></td>
+                                    <td>@Model.Receipt.ReceiptNumber</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Transaction ID:</strong></td>
+                                    <td>@Model.Receipt.TransactionId</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Payment Date:</strong></td>
+                                    <td>@Model.Receipt.PaymentDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Payment Method:</strong></td>
+                                    <td>@Model.Receipt.PaymentMethod</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Course Information</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Course:</strong></td>
+                                    <td>@Model.Course.Title</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Student:</strong></td>
+                                    <td>@Model.Receipt.StudentName</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email:</strong></td>
+                                    <td>@Model.Receipt.StudentEmail</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="payment-breakdown bg-light p-3 rounded mb-4">
+                        <h6>Payment Breakdown</h6>
+                        <div class="d-flex justify-content-between">
+                            <span>Certificate Fee:</span>
+                            <span>₹@Model.Receipt.CertificateFee.ToString("F2")</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Exam Fee:</span>
+                            <span>₹@Model.Receipt.ExamFee.ToString("F2")</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between font-weight-bold">
+                            <span>Total Paid:</span>
+                            <span class="text-success">₹@Model.Receipt.TotalAmount.ToString("F2")</span>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success">
+                        <h6><i class="fas fa-unlock"></i> Access Granted:</h6>
+                        <ul class="mb-0">
+                            @if (Model.ExamAccess)
+                            {
+                                <li><i class="fas fa-check text-success"></i> Exam Access: Enabled</li>
+                            }
+                            @if (Model.CertificateAccess)
+                            {
+                                <li><i class="fas fa-check text-success"></i> Certificate Access: Enabled</li>
+                            }
+                        </ul>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-qrcode"></i> Payment Verification QR Code:</h6>
+                        <div class="text-center">
+                            <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=@Uri.EscapeDataString($"Payment Verified: {Model.Receipt.TransactionId} - Amount: ₹{Model.Receipt.TotalAmount:F2}")" 
+                                 alt="Payment QR Code" class="img-fluid" style="max-width: 150px;" />
+                            <p class="small text-muted mt-2">Scan to verify payment details</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between flex-wrap gap-2">
+                        <a asp-action="DownloadCertificateReceipt" asp-route-receiptId="@Model.Receipt.Id" class="btn btn-outline-primary">
+                            <i class="fas fa-download"></i> Download Receipt
+                        </a>
+                        <a asp-action="CourseDetails" asp-route-id="@Model.Course.Id" class="btn btn-primary">
+                            <i class="fas fa-book"></i> Go to Course
+                        </a>
+                        <a asp-action="MyCourses" class="btn btn-success">
+                            <i class="fas fa-graduation-cap"></i> My Courses
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

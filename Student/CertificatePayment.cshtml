@@ -1,0 +1,444 @@
+@model EasyLearn.Models.ViewModels.CertificatePaymentViewModel
+@{
+    ViewData["Title"] = "Certificate & Exam Payment";
+}
+
+@if (Model == null)
+{
+    <div class="container mt-4">
+        <div class="alert alert-danger">
+            <h4>Error</h4>
+            <p>Unable to load payment information. Please try again.</p>
+            <a href="/student/browse-courses" class="btn btn-primary">Browse Courses</a>
+        </div>
+    </div>
+    return;
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-certificate"></i> Certificate & Exam Payment</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Course Details</h5>
+                            <div class="course-info mb-4">
+                                <h6 class="text-primary">@(Model.Course?.Title ?? "Unknown Course")</h6>
+                                <p class="text-muted">@(Model.Course?.Description ?? "No description available")</p>
+                                <p><strong>Instructor:</strong> @(Model.Course?.Instructor?.FirstName ?? "Unknown") @(Model.Course?.Instructor?.LastName ?? "")</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="payment-summary bg-light p-3 rounded">
+                                <h5>Payment Summary</h5>
+                                <div class="d-flex justify-content-between">
+                                    <span>Certificate Fee:</span>
+                                    <span>₹@Model.CertificateFee.ToString("F2")</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Exam Fee:</span>
+                                    <span>₹@Model.ExamFee.ToString("F2")</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between font-weight-bold">
+                                    <span>Total Amount:</span>
+                                    <span class="text-success">₹@Model.TotalAmount.ToString("F2")</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="ProcessCertificatePayment" method="post" class="mt-4">
+                        <input type="hidden" asp-for="CourseId" />
+                        <input type="hidden" asp-for="StudentName" />
+                        <input type="hidden" asp-for="StudentEmail" />
+                        <input type="hidden" asp-for="CertificateFee" />
+                        <input type="hidden" asp-for="ExamFee" />
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Student Name</label>
+                                    <input type="text" class="form-control" value="@Model.StudentName" readonly />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" value="@Model.StudentEmail" readonly />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-label">Select Payment Method</label>
+                            <div class="row">
+                                @if (Model.AvailablePaymentMethods?.Any() == true)
+                                {
+                                    @foreach (var method in Model.AvailablePaymentMethods)
+                                    {
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" asp-for="SelectedPaymentMethod" value="@method.Type" id="payment_@method.Type" />
+                                                <label class="form-check-label" for="payment_@method.Type">
+                                                    <i class="@method.Icon"></i> @method.DisplayName
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" asp-for="SelectedPaymentMethod" value="CreditCard" id="payment_CreditCard" checked />
+                                            <label class="form-check-label" for="payment_CreditCard">
+                                                <i class="fas fa-credit-card"></i> Credit Card
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" asp-for="SelectedPaymentMethod" value="UPI" id="payment_UPI" />
+                                            <label class="form-check-label" for="payment_UPI">
+                                                <i class="fas fa-mobile-alt"></i> UPI
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" asp-for="SelectedPaymentMethod" value="QRCode" id="payment_QRCode" />
+                                            <label class="form-check-label" for="payment_QRCode">
+                                                <i class="fas fa-qrcode"></i> QR Code
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- QR Code Payment Section -->
+                        <div id="qrPaymentSection" class="mb-4" style="display: none;">
+                            <div class="card border-info">
+                                <div class="card-header bg-info text-white">
+                                    <h6 class="mb-0"><i class="fas fa-qrcode"></i> QR Code Payment</h6>
+                                </div>
+                                <div class="card-body text-center">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6>Scan QR Code to Pay</h6>
+                                            <div id="qrCodeContainer" class="mb-3">
+                                                <canvas id="qrCanvas" width="200" height="200" class="border"></canvas>
+                                            </div>
+                                            <p class="text-muted small">Scan this QR code with any UPI app to make payment</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>Or Scan Payment QR from Receipt</h6>
+                                            <button type="button" class="btn btn-outline-primary mb-3" onclick="startQRScanner()">
+                                                <i class="fas fa-camera"></i> Scan QR Code
+                                            </button>
+                                            <div id="qrScannerContainer" style="display: none;">
+                                                <video id="qrVideo" width="300" height="200" class="border rounded"></video>
+                                                <div class="mt-2">
+                                                    <button type="button" class="btn btn-sm btn-secondary" onclick="stopQRScanner()">
+                                                        <i class="fas fa-stop"></i> Stop Scanner
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div id="scanResult" class="mt-3" style="display: none;">
+                                                <div class="alert alert-success">
+                                                    <strong>QR Code Detected:</strong>
+                                                    <div id="scanResultText"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- UPI Payment Section -->
+                        <div id="upiPaymentSection" class="mb-4" style="display: none;">
+                            <div class="card border-success">
+                                <div class="card-header bg-success text-white">
+                                    <h6 class="mb-0"><i class="fas fa-mobile-alt"></i> UPI Payment</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">UPI ID</label>
+                                        <input type="text" class="form-control" id="upiId" placeholder="yourname@paytm" />
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-success" onclick="processUPIPayment()">
+                                            <i class="fas fa-mobile-alt"></i> Pay with UPI
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Credit Card Payment Section -->
+                        <div id="cardPaymentSection" class="mb-4" style="display: none;">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0"><i class="fas fa-credit-card"></i> Credit/Debit Card Payment</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">Card Number</label>
+                                                <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">Cardholder Name</label>
+                                                <input type="text" class="form-control" id="cardName" placeholder="John Doe" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">Expiry Date</label>
+                                                <input type="text" class="form-control" id="cardExpiry" placeholder="MM/YY" maxlength="5" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">CVV</label>
+                                                <input type="text" class="form-control" id="cardCvv" placeholder="123" maxlength="4" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>What you get:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Access to course exams and assessments</li>
+                                <li>Downloadable certificate upon course completion</li>
+                                <li>Payment receipt for your records</li>
+                                <li>Lifetime access to certificate downloads</li>
+                            </ul>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="CourseDetails" asp-route-id="@Model.CourseId" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Course
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-credit-card"></i> Pay ₹@Model.TotalAmount.ToString("F2")
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- QR Code Scanner Library -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
+<script>
+let qrStream = null;
+let qrVideo = null;
+let qrCanvas = null;
+let qrContext = null;
+
+// Payment method change handler
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentMethods = document.querySelectorAll('input[name="SelectedPaymentMethod"]');
+    const qrSection = document.getElementById('qrPaymentSection');
+    const upiSection = document.getElementById('upiPaymentSection');
+    const cardSection = document.getElementById('cardPaymentSection');
+    
+    paymentMethods.forEach(method => {
+        method.addEventListener('change', function() {
+            // Hide all sections
+            qrSection.style.display = 'none';
+            upiSection.style.display = 'none';
+            cardSection.style.display = 'none';
+            
+            // Show selected section
+            if (this.value === 'QRCode') {
+                qrSection.style.display = 'block';
+                generatePaymentQR();
+            } else if (this.value === 'UPI') {
+                upiSection.style.display = 'block';
+            } else if (this.value === 'CreditCard') {
+                cardSection.style.display = 'block';
+            }
+        });
+    });
+    
+    // Format card number input
+    const cardNumberInput = document.getElementById('cardNumber');
+    if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+        });
+    }
+    
+    // Format expiry date input
+    const cardExpiryInput = document.getElementById('cardExpiry');
+    if (cardExpiryInput) {
+        cardExpiryInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+    }
+});
+
+// Generate QR code for payment
+function generatePaymentQR() {
+    const canvas = document.getElementById('qrCanvas');
+    if (canvas) {
+        const upiString = `upi://pay?pa=merchant@paytm&pn=EasyLearn&am=@Model.TotalAmount&cu=INR&tn=Certificate Payment for Course @(Model.Course?.Title ?? "Course")`;
+        
+        QRCode.toCanvas(canvas, upiString, {
+            width: 200,
+            height: 200,
+            colorDark: '#000000',
+            colorLight: '#ffffff'
+        }, function (error) {
+            if (error) console.error(error);
+        });
+    }
+}
+
+// Start QR code scanner
+function startQRScanner() {
+    const video = document.getElementById('qrVideo');
+    const scannerContainer = document.getElementById('qrScannerContainer');
+    
+    scannerContainer.style.display = 'block';
+    
+    navigator.mediaDevices.getUserMedia({ 
+        video: { 
+            facingMode: 'environment',
+            width: { ideal: 300 },
+            height: { ideal: 200 }
+        } 
+    })
+    .then(function(stream) {
+        qrStream = stream;
+        qrVideo = video;
+        video.srcObject = stream;
+        video.play();
+        
+        // Start scanning
+        scanQRCode();
+    })
+    .catch(function(err) {
+        console.error('Error accessing camera:', err);
+        alert('Unable to access camera. Please check permissions.');
+    });
+}
+
+// Stop QR code scanner
+function stopQRScanner() {
+    if (qrStream) {
+        qrStream.getTracks().forEach(track => track.stop());
+        qrStream = null;
+    }
+    
+    const scannerContainer = document.getElementById('qrScannerContainer');
+    scannerContainer.style.display = 'none';
+    
+    const scanResult = document.getElementById('scanResult');
+    scanResult.style.display = 'none';
+}
+
+// Scan QR code from video
+function scanQRCode() {
+    if (!qrVideo || qrVideo.readyState !== qrVideo.HAVE_ENOUGH_DATA) {
+        requestAnimationFrame(scanQRCode);
+        return;
+    }
+    
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = qrVideo.videoWidth;
+    canvas.height = qrVideo.videoHeight;
+    
+    context.drawImage(qrVideo, 0, 0, canvas.width, canvas.height);
+    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    
+    if (typeof jsQR !== 'undefined') {
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        
+        if (code) {
+            document.getElementById('scanResultText').textContent = code.data;
+            document.getElementById('scanResult').style.display = 'block';
+            
+            // Process the scanned QR code
+            processScannedQR(code.data);
+            return;
+        }
+    }
+    
+    requestAnimationFrame(scanQRCode);
+}
+
+// Process scanned QR code
+function processScannedQR(qrData) {
+    console.log('Scanned QR:', qrData);
+    
+    // Check if it's a UPI payment QR
+    if (qrData.startsWith('upi://')) {
+        // Extract payment information
+        const url = new URL(qrData);
+        const amount = url.searchParams.get('am');
+        const merchant = url.searchParams.get('pn');
+        
+        if (amount && parseFloat(amount) === @Model.TotalAmount) {
+            alert('Payment QR code verified! Redirecting to payment app...');
+            window.open(qrData, '_blank');
+        } else {
+            alert('QR code amount does not match the payment amount.');
+        }
+    } else {
+        alert('Invalid payment QR code.');
+    }
+    
+    stopQRScanner();
+}
+
+// Process UPI payment
+function processUPIPayment() {
+    const upiId = document.getElementById('upiId').value;
+    
+    if (!upiId) {
+        alert('Please enter your UPI ID');
+        return;
+    }
+    
+    const upiString = `upi://pay?pa=${upiId}&pn=@(Model.StudentName ?? "Student")&am=@Model.TotalAmount&cu=INR&tn=Certificate Payment for Course @(Model.Course?.Title ?? "Course")`;
+    
+    // Open UPI app
+    window.open(upiString, '_blank');
+    
+    // Simulate payment processing
+    setTimeout(() => {
+        if (confirm('Have you completed the payment? Click OK to confirm.')) {
+            document.querySelector('form').submit();
+        }
+    }, 2000);
+}
+</script>

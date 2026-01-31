@@ -1,0 +1,244 @@
+@model EasyLearn.Models.Exam
+@{
+    ViewData["Title"] = "Exam - " + Model.Title;
+    var attemptId = ViewBag.AttemptId as int?;
+    var startTime = ViewBag.StartTime as DateTime?;
+    var timeRemaining = ViewBag.TimeRemaining as double?;
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Exam Header -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">@Model.Title</h5>
+                            <small class="text-muted">@Model.Course.Title</small>
+                        </div>
+                        <div class="text-end">
+                            <div class="badge bg-primary text-white fs-6" id="timer">
+                                <i class="fas fa-clock me-1"></i>
+                                <span id="timeDisplay">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.InstructorInstructions))
+            {
+                <!-- Instructor Instructions -->
+                <div class="card mb-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h6 class="mb-0"><i class="fas fa-bullhorn me-2"></i>Important Instructions from Instructor</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning mb-0">
+                            @Html.Raw(Model.InstructorInstructions.Replace("\n", "<br>"))
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Part A: Multiple Choice Questions -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-list-check me-2"></i>Part A: Multiple Choice Questions
+                        <span class="badge bg-primary ms-2">@Model.PartAMarks Marks</span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form id="examForm" method="post" action="/student/submit-exam-part-a">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="examId" value="@Model.Id" />
+                        <input type="hidden" name="attemptId" value="@attemptId" />
+                        
+                        @if (Model.ExamQuestions?.Any() == true)
+                        {
+                            @for (int i = 0; i < Model.ExamQuestions.Count; i++)
+                            {
+                                var question = Model.ExamQuestions.ElementAt(i);
+                                <div class="question-container mb-4 p-3 border rounded">
+                                    <div class="question-header mb-3">
+                                        <span class="badge bg-secondary me-2">Q@(i + 1)</span>
+                                        <span class="fw-bold">@question.Text</span>
+                                        <span class="text-muted ms-2">(@question.Points marks)</span>
+                                    </div>
+                                    
+                                    <div class="options">
+                                        @if (question.Options?.Any() == true)
+                                        {
+                                            @for (int j = 0; j < question.Options.Count; j++)
+                                            {
+                                                var option = question.Options.ElementAt(j);
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" 
+                                                           type="@(question.Type == ExamQuestionType.MultipleChoice ? "radio" : "checkbox")" 
+                                                           name="question_@question.Id" 
+                                                           value="@option.Id" 
+                                                           id="q@(question.Id)_opt@option.Id">
+                                                    <label class="form-check-label" for="q@(question.Id)_opt@option.Id">
+                                                        @((char)('A' + j)). @option.Text
+                                                    </label>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                No questions available for this exam.
+                            </div>
+                        }
+                        
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-arrow-right me-2"></i>Submit Part A & Continue to Part B
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Warning Modal for Navigation -->
+<div class="modal fade" id="navigationWarning" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Warning
+                </h5>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to leave this page? Your exam progress may be lost.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Stay on Page</button>
+                <button type="button" class="btn btn-danger" id="confirmLeave">Leave Page</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Exam timer
+        let timeRemaining = @(timeRemaining ?? 0) * 60; // Convert to seconds
+        let timerInterval;
+
+        function updateTimer() {
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById('timeDisplay').textContent = 'Time Up!';
+                // Auto-submit the exam
+                document.getElementById('examForm').submit();
+                return;
+            }
+
+            const hours = Math.floor(timeRemaining / 3600);
+            const minutes = Math.floor((timeRemaining % 3600) / 60);
+            const seconds = timeRemaining % 60;
+
+            const display = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timeDisplay').textContent = display;
+
+            timeRemaining--;
+        }
+
+        // Start timer
+        if (timeRemaining > 0) {
+            updateTimer();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        // Prevent page navigation
+        let isSubmitting = false;
+        
+        window.addEventListener('beforeunload', function(e) {
+            if (!isSubmitting) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('examForm').addEventListener('submit', function() {
+            isSubmitting = true;
+        });
+
+        // Disable right-click and certain key combinations
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            // Disable F12, Ctrl+Shift+I, Ctrl+U, etc.
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.key === 'u') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'C')) {
+                e.preventDefault();
+            }
+        });
+
+        // Auto-save answers periodically (unique per student attempt)
+        setInterval(function() {
+            // Save current answers to localStorage as backup
+            const formData = new FormData(document.getElementById('examForm'));
+            const answers = {};
+            for (let [key, value] of formData.entries()) {
+                if (key.startsWith('question_')) {
+                    answers[key] = value;
+                }
+            }
+            localStorage.setItem('examAnswers_@attemptId', JSON.stringify(answers));
+        }, 30000); // Save every 30 seconds
+
+        // Load saved answers on page load
+        window.addEventListener('load', function() {
+            const savedAnswers = localStorage.getItem('examAnswers_@attemptId');
+            if (savedAnswers) {
+                const answers = JSON.parse(savedAnswers);
+                for (let [key, value] of Object.entries(answers)) {
+                    const input = document.querySelector(`input[name="${key}"][value="${value}"]`);
+                    if (input) {
+                        input.checked = true;
+                    }
+                }
+            }
+        });
+        
+        // Clear saved answers after successful submission
+        document.getElementById('examForm').addEventListener('submit', function() {
+            localStorage.removeItem('examAnswers_@attemptId');
+        });
+    </script>
+}
+
+<style>
+    .question-container {
+        background-color: #f8f9fa;
+    }
+    
+    .question-header {
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 10px;
+    }
+    
+    .question-container {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+</style>

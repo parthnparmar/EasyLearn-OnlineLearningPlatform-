@@ -1,0 +1,187 @@
+@model EasyLearn.Models.Exam
+@{
+    ViewData["Title"] = "Part B - " + Model.Title;
+    var attemptId = ViewBag.AttemptId as int?;
+    var timeRemaining = ViewBag.TimeRemaining as double?;
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Exam Header -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">@Model.Title - Part B</h5>
+                            <small class="text-muted">@Model.Course.Title</small>
+                        </div>
+                        <div class="text-end">
+                            <div class="badge bg-warning text-white fs-6" id="timer">
+                                <i class="fas fa-clock me-1"></i>
+                                <span id="timeDisplay">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Part B: Written Questions -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>Part B: Written Questions
+                        <span class="badge bg-success ms-2">@Model.PartBMarks Marks</span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success mb-4">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>Part A Completed!</strong> You have successfully completed Part A. Now answer the written questions below.
+                    </div>
+
+                    <form id="partBForm" method="post" action="/student/submit-exam-part-b">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="examId" value="@Model.Id" />
+                        <input type="hidden" name="attemptId" value="@attemptId" />
+                        
+                        @if (Model.ExamQuestions?.Any() == true)
+                        {
+                            @for (int i = 0; i < Model.ExamQuestions.Count; i++)
+                            {
+                                var question = Model.ExamQuestions.ElementAt(i);
+                                <div class="question-container mb-4 p-4 border rounded">
+                                    <div class="question-header mb-3">
+                                        <span class="badge bg-primary me-2">Q@(i + 1)</span>
+                                        <span class="fw-bold">@question.Text</span>
+                                        <span class="text-muted ms-2">(@question.Points marks)</span>
+                                    </div>
+                                    
+                                    <div class="answer-area">
+                                        <textarea name="question_@question.Id" 
+                                                  class="form-control" 
+                                                  rows="8" 
+                                                  placeholder="Write your answer here..."
+                                                  required></textarea>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                No written questions available for this exam.
+                            </div>
+                        }
+                        
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check me-2"></i>Submit Part B & Complete Exam
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Exam timer
+        let timeRemaining = @(timeRemaining ?? 0) * 60; // Convert to seconds
+        let timerInterval;
+
+        function updateTimer() {
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById('timeDisplay').textContent = 'Time Up!';
+                // Auto-submit the exam
+                document.getElementById('partBForm').submit();
+                return;
+            }
+
+            const hours = Math.floor(timeRemaining / 3600);
+            const minutes = Math.floor((timeRemaining % 3600) / 60);
+            const seconds = timeRemaining % 60;
+
+            const display = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timeDisplay').textContent = display;
+
+            // Change color when time is running low
+            const timerElement = document.getElementById('timer');
+            if (timeRemaining <= 300) { // 5 minutes
+                timerElement.className = 'badge bg-danger text-white fs-6';
+            } else if (timeRemaining <= 900) { // 15 minutes
+                timerElement.className = 'badge bg-warning text-white fs-6';
+            }
+
+            timeRemaining--;
+        }
+
+        // Start timer
+        if (timeRemaining > 0) {
+            updateTimer();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        // Prevent page navigation
+        let isSubmitting = false;
+        
+        window.addEventListener('beforeunload', function(e) {
+            if (!isSubmitting) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('partBForm').addEventListener('submit', function() {
+            isSubmitting = true;
+        });
+
+        // Auto-save answers periodically
+        setInterval(function() {
+            const formData = new FormData(document.getElementById('partBForm'));
+            const answers = {};
+            for (let [key, value] of formData.entries()) {
+                if (key.startsWith('question_')) {
+                    answers[key] = value;
+                }
+            }
+            localStorage.setItem('partBAnswers_@Model.Id', JSON.stringify(answers));
+        }, 30000); // Save every 30 seconds
+
+        // Load saved answers on page load
+        window.addEventListener('load', function() {
+            const savedAnswers = localStorage.getItem('partBAnswers_@Model.Id');
+            if (savedAnswers) {
+                const answers = JSON.parse(savedAnswers);
+                for (let [key, value] of Object.entries(answers)) {
+                    const textarea = document.querySelector(`textarea[name="${key}"]`);
+                    if (textarea) {
+                        textarea.value = value;
+                    }
+                }
+            }
+        });
+    </script>
+}
+
+<style>
+    .question-container {
+        background-color: #f8f9fa;
+    }
+    
+    .question-header {
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 10px;
+    }
+    
+    .answer-area textarea {
+        min-height: 150px;
+        font-family: 'Arial', sans-serif;
+        line-height: 1.6;
+    }
+</style>

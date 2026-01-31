@@ -1,0 +1,137 @@
+@model EasyLearn.Models.ViewModels.PaymentConfirmationViewModel
+@{
+    ViewData["Title"] = "Payment Confirmation";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Payment Successful!
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="alert alert-success">
+                            <h5><i class="fas fa-graduation-cap me-2"></i>Congratulations!</h5>
+                            <p class="mb-0">You have successfully enrolled in <strong>@Model.Course.Title</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Receipt Details -->
+                        <div class="col-md-6">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0"><i class="fas fa-receipt me-2"></i>Payment Receipt</h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><strong>Receipt Number:</strong></td>
+                                            <td>@Model.Receipt.ReceiptNumber</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Transaction ID:</strong></td>
+                                            <td><code>@Model.Receipt.TransactionId</code></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Amount Paid:</strong></td>
+                                            <td><strong class="text-success">@Model.Receipt.Currency @Model.Receipt.Amount.ToString("F2")</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Payment Method:</strong></td>
+                                            <td>@Model.Receipt.PaymentMethod</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Payment Date:</strong></td>
+                                            <td>@Model.Receipt.PaymentDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Status:</strong></td>
+                                            <td><span class="badge bg-success">@Model.Receipt.Status</span></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Enrollment Details -->
+                        <div class="col-md-6">
+                            <div class="card border-info">
+                                <div class="card-header bg-info text-white">
+                                    <h6 class="mb-0"><i class="fas fa-id-card me-2"></i>Enrollment Details</h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><strong>Enrollment Number:</strong></td>
+                                            <td><code>@Model.Receipt.EnrollmentNumber</code></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Student Name:</strong></td>
+                                            <td>@Model.Receipt.StudentName</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Email:</strong></td>
+                                            <td>@Model.Receipt.StudentEmail</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Phone:</strong></td>
+                                            <td>@Model.Receipt.StudentPhone</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Course:</strong></td>
+                                            <td>@Model.Receipt.CourseName</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Instructor:</strong></td>
+                                            <td>@Model.Receipt.InstructorName</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Action Buttons -->
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <div class="btn-group" role="group">
+                                <a asp-action="DownloadReceipt" asp-route-receiptId="@Model.Receipt.Id" 
+                                   class="btn btn-outline-primary">
+                                    <i class="fas fa-download me-1"></i>Download Receipt PDF
+                                </a>
+                                <a asp-action="CourseDetails" asp-route-id="@Model.Course.Id" 
+                                   class="btn btn-primary">
+                                    <i class="fas fa-play me-1"></i>Start Learning
+                                </a>
+                                <a asp-action="MyCourses" class="btn btn-outline-secondary">
+                                    <i class="fas fa-book me-1"></i>My Courses
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Important Notes -->
+                    <div class="mt-4">
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-info-circle me-2"></i>Important Notes:</h6>
+                            <ul class="mb-0">
+                                <li>Please save your receipt number and enrollment number for future reference</li>
+                                <li>You can download the receipt PDF anytime from your dashboard</li>
+                                <li>Access to course materials is now available in your enrolled courses</li>
+                                <li>Contact support if you have any questions about your enrollment</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

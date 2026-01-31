@@ -1,0 +1,86 @@
+@model List<EasyLearn.Models.Exam>
+
+@{
+    ViewData["Title"] = "Approved Exams";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h5 class="mb-0">Approved Exams</h5>
+                    <p class="text-sm mb-0">View approved exams for your enrolled courses</p>
+                </div>
+                <div class="card-body px-0 pb-0">
+                    <div class="table-responsive">
+                        <table class="table table-flush">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Course</th>
+                                    <th>Exam Title</th>
+                                    <th>Date & Session</th>
+                                    <th>Instructor</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    @foreach (var exam in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="ms-3">
+                                                        <h6 class="mb-0 text-sm">@exam.Course?.Title</h6>
+                                                        <p class="text-xs text-secondary mb-0">@exam.Course?.Category?.Name</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <h6 class="mb-0 text-sm">@exam.Title</h6>
+                                                <p class="text-xs text-secondary mb-0">@exam.Description</p>
+                                            </td>
+                                            <td>
+                                                <span class="text-sm font-weight-bold">@exam.ScheduledStartTime.ToString("MMM dd, yyyy")</span><br>
+                                                <span class="text-xs text-secondary">@exam.ScheduledStartTime.ToString("hh:mm tt")</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-sm">@exam.Instructor?.FirstName @exam.Instructor?.LastName</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-sm bg-gradient-success">Approved</span>
+                                            </td>
+                                            <td>
+                                                <a href="/student/my-exams" class="btn btn-link text-primary px-3 mb-0">
+                                                    <i class="fas fa-eye text-primary me-2"></i>View Details
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4">
+                                            <div class="text-center">
+                                                <i class="fas fa-clipboard-list fa-3x text-secondary mb-3"></i>
+                                                <h5 class="text-secondary">No Approved Exams</h5>
+                                                <p class="text-sm text-secondary">No approved exams available for your enrolled courses</p>
+                                                <a href="/student/browse-courses" class="btn bg-gradient-primary">
+                                                    <i class="fas fa-search me-2"></i>Browse Courses
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

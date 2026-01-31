@@ -1,0 +1,167 @@
+@model EasyLearn.Models.ViewModels.PaymentViewModel
+@{
+    ViewData["Title"] = "Enroll - " + Model.Course.Title;
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Course Summary Card -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-graduation-cap me-2"></i>Free Course Enrollment</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <img src="@(Model.Course.ThumbnailUrl ?? "/images/course-placeholder.jpg")" 
+                                 alt="@Model.Course.Title" class="img-fluid rounded">
+                        </div>
+                        <div class="col-md-9">
+                            <h5 class="fw-bold">@Model.Course.Title</h5>
+                            <p class="text-muted mb-2">by @Model.Course.Instructor.FirstName @Model.Course.Instructor.LastName</p>
+                            <p class="mb-2">@Model.Course.Description</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-secondary">@Model.Course.Category.Name</span>
+                                <h4 class="text-success mb-0">FREE</h4>
+                            </div>
+                            <div class="alert alert-info mt-3 mb-0">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Note:</strong> Course enrollment is free. Only exams and certificates require payment.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enrollment Confirmation Card -->
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-user-check me-2"></i>Confirm Enrollment</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="EnrollDirect" method="post" id="enrollmentForm">
+                        <input type="hidden" asp-for="CourseId" />
+                        <input type="hidden" asp-for="Amount" />
+                        <input type="hidden" name="SelectedPaymentMethod" value="Free" />
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="StudentName" class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" asp-for="StudentName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="StudentEmail" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" asp-for="StudentEmail" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="StudentPhone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" asp-for="StudentPhone">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Enrollment Summary -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Enrollment Summary</h6>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Course Access:</span>
+                                            <span class="text-success">FREE</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Learning Materials:</span>
+                                            <span class="text-success">FREE</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Video Lessons:</span>
+                                            <span class="text-success">FREE</span>
+                                        </div>
+                                        <hr>
+                                        <div class="d-flex justify-content-between fw-bold">
+                                            <span>Total Cost:</span>
+                                            <span class="text-success">FREE</span>
+                                        </div>
+                                        <small class="text-muted">*Exam fees (₹300) and Certificate fees (₹500) apply separately</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between">
+                                    <a href="@Url.Action("CourseDetails", new { id = Model.CourseId })" 
+                                       class="btn btn-outline-secondary">
+                                        <i class="fas fa-arrow-left me-1"></i>Back to Course
+                                    </a>
+                                    <button type="submit" class="btn btn-success btn-lg" id="enrollButton">
+                                        <i class="fas fa-check me-1"></i>Enroll for FREE
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="alert alert-success mt-3">
+                <i class="fas fa-graduation-cap me-2"></i>
+                <strong>Free Learning:</strong> Start learning immediately after enrollment. Pay only for exams and certificates when you're ready.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.payment-method-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.payment-option {
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.payment-option:hover {
+    border-color: #007bff;
+    box-shadow: 0 4px 8px rgba(0,123,255,0.1);
+}
+
+.payment-radio:checked + .payment-label .payment-option {
+    border-color: #28a745;
+    background-color: #f8fff9;
+    box-shadow: 0 4px 12px rgba(40,167,69,0.2);
+}
+
+.payment-radio:checked + .payment-label .payment-option .text-primary {
+    color: #28a745 !important;
+}
+
+.payment-label {
+    margin-bottom: 0;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('enrollmentForm').addEventListener('submit', function(e) {
+        const enrollButton = document.getElementById('enrollButton');
+        enrollButton.disabled = true;
+        enrollButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Processing Enrollment...';
+    });
+});
+</script>

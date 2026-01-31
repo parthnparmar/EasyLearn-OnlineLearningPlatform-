@@ -1,0 +1,95 @@
+@model List<EasyLearn.Models.ExamSchedule>
+@{
+    ViewData["Title"] = "Exam Debug";
+    var examService = ViewBag.ExamService as EasyLearn.Services.IExamService;
+    var studentId = ViewBag.StudentId as string ?? "";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Exam Debug Information</h5>
+                    <p class="text-sm mb-0">Debug information for exam availability issues</p>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong>Current Server Time:</strong> @DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")<br>
+                        <strong>Current UTC Time:</strong> @DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")<br>
+                        <strong>Student ID:</strong> @studentId
+                    </div>
+
+                    @if (Model.Any())
+                    {
+                        <h6>Your Exam Schedules:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Exam Title</th>
+                                        <th>Course</th>
+                                        <th>Scheduled Date</th>
+                                        <th>Session</th>
+                                        <th>Duration</th>
+                                        <th>Calculated Start</th>
+                                        <th>Calculated End</th>
+                                        <th>Is Available</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var schedule in Model)
+                                    {
+                                        var examStart = schedule.ScheduledDate.Date.AddHours(
+                                            schedule.Session.ToLower() switch {
+                                                "morning" => 9,
+                                                "afternoon" => 14,
+                                                "evening" => 18,
+                                                _ => 9
+                                            });
+                                        var examEnd = examStart.AddMinutes(schedule.Exam.DurationMinutes);
+                                        var isAvailable = await examService.IsExamAvailableForStudentAsync(studentId, schedule.ExamId);
+                                        var status = await examService.GetExamTimeStatusAsync(schedule.ExamId, studentId);
+                                        
+                                        <tr class="@(isAvailable ? "table-success" : "table-warning")">
+                                            <td>@schedule.Exam.Title</td>
+                                            <td>@schedule.Exam.Course.Title</td>
+                                            <td>@schedule.ScheduledDate.ToString("yyyy-MM-dd")</td>
+                                            <td>@schedule.Session</td>
+                                            <td>@schedule.Exam.DurationMinutes min</td>
+                                            <td>@examStart.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                            <td>@examEnd.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                            <td>
+                                                @if (isAvailable)
+                                                {
+                                                    <span class="badge bg-success">YES</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">NO</span>
+                                                }
+                                            </td>
+                                            <td>@status</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            <strong>No exam schedules found.</strong> Contact your instructor to assign exam dates.
+                        </div>
+                    }
+
+                    <div class="mt-4">
+                        <a href="/student/my-exams" class="btn btn-primary">Back to My Exams</a>
+                        <button onclick="location.reload()" class="btn btn-secondary">Refresh</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

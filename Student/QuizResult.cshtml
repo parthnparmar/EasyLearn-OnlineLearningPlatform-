@@ -1,0 +1,105 @@
+@model EasyLearn.Models.QuizAttempt
+@{
+    ViewData["Title"] = "Quiz Result";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header @(Model.IsPassed ? "bg-success" : "bg-danger") text-white text-center">
+                    <h3 class="mb-0">
+                        <i class="fas @(Model.IsPassed ? "fa-check-circle" : "fa-times-circle")"></i>
+                        Quiz @(Model.IsPassed ? "Passed" : "Failed")
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <h1 class="display-4 @(Model.IsPassed ? "text-success" : "text-danger")">
+                            @Model.Score%
+                        </h1>
+                        <p class="lead">Your Score</p>
+                    </div>
+
+                    <div class="row text-center mb-4">
+                        <div class="col-md-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">@Model.Quiz.Title</h5>
+                                    <p class="card-text text-muted">Quiz Name</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">@Model.Quiz.Questions.Count</h5>
+                                    <p class="card-text text-muted">Total Questions</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">@Math.Round((double)Model.Score * Model.Quiz.Questions.Count / 100)</h5>
+                                    <p class="card-text text-muted">Correct Answers</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">@Model.Quiz.PassingScore%</h5>
+                                    <p class="card-text text-muted">Passing Score</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert @(Model.IsPassed ? "alert-success" : "alert-danger")">
+                        <h5 class="alert-heading">
+                            <i class="fas @(Model.IsPassed ? "fa-trophy" : "fa-exclamation-triangle")"></i>
+                            @(Model.IsPassed ? "Congratulations!" : "Better Luck Next Time!")
+                        </h5>
+                        <p class="mb-0">
+                            @if (Model.IsPassed)
+                            {
+                                <text>You have successfully passed the quiz with a score of @Model.Score%. Great job!</text>
+                            }
+                            else
+                            {
+                                <text>You scored @Model.Score%, which is below the passing score of @Model.Quiz.PassingScore%. Don't worry, you can retake the quiz to improve your score.</text>
+                            }
+                        </p>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <strong>Started At:</strong> @Model.AttemptedAt.ToString("MMM dd, yyyy hh:mm tt")
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Completed At:</strong> @Model.CompletedAt?.ToString("MMM dd, yyyy hh:mm tt")
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <a href="@Url.Action("CourseDetails", new { id = Model.Quiz.CourseId })" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> Back to Course
+                        </a>
+                        
+                        @if (!Model.IsPassed)
+                        {
+                            <a href="@Url.Action("TakeQuiz", new { quizId = Model.QuizId })" class="btn btn-warning ms-2">
+                                <i class="fas fa-redo"></i> Retake Quiz
+                            </a>
+                        }
+                        
+                        <a href="@Url.Action("MyCourses")" class="btn btn-secondary ms-2">
+                            <i class="fas fa-book"></i> My Courses
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

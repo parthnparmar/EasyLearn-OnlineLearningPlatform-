@@ -1,0 +1,209 @@
+@model EasyLearn.Models.ViewModels.ReExamPaymentViewModel
+@{
+    ViewData["Title"] = "Re-Exam Payment";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h5 class="mb-0">Re-Exam Payment</h5>
+                            <p class="text-sm mb-0">Pay to retake the exam</p>
+                        </div>
+                        <div class="ms-auto">
+                            <span class="badge bg-gradient-warning">Re-Exam Required</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Course Information -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card bg-gradient-light">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-8">
+                                            <h6 class="mb-1">@Model.Course.Title</h6>
+                                            <p class="text-sm text-muted mb-0">@Model.Exam.Title</p>
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar me-1"></i>
+                                                Exam Date: @Model.Exam.ScheduledStartTime.ToString("MMM dd, yyyy") - @Model.Exam.ScheduledStartTime.ToString("hh:mm tt")
+                                            </small>
+                                        </div>
+                                        <div class="col-4 text-end">
+                                            <h4 class="text-danger mb-0">₹@Model.ReExamFee</h4>
+                                            <small class="text-muted">Re-exam Fee</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Form -->
+                    <form asp-action="ProcessReExamPayment" method="post">
+                        <input type="hidden" asp-for="ExamAttemptId" />
+                        
+                        <!-- Student Information -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">Student Name</label>
+                                    <input type="text" class="form-control" asp-for="StudentName" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">Email Address</label>
+                                    <input type="email" class="form-control" asp-for="StudentEmail" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Method Selection -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <label class="form-control-label">Select Payment Method</label>
+                                <div class="row mt-2">
+                                    @foreach (var method in Model.AvailablePaymentMethods)
+                                    {
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-check payment-method-card">
+                                                <input class="form-check-input" type="radio" name="SelectedPaymentMethod" 
+                                                       value="@method.Type" id="payment_@method.Type">
+                                                <label class="form-check-label w-100" for="payment_@method.Type">
+                                                    <div class="card h-100">
+                                                        <div class="card-body text-center py-3">
+                                                            <i class="@method.Icon fa-2x text-primary mb-2"></i>
+                                                            <h6 class="mb-0">@method.DisplayName</h6>
+                                                            <small class="text-muted">Secure payment method</small>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Summary -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="card bg-gradient-secondary">
+                                    <div class="card-body">
+                                        <h6 class="text-white mb-3">Payment Summary</h6>
+                                        <div class="row text-white">
+                                            <div class="col-8">
+                                                <p class="mb-1">Re-exam Fee</p>
+                                                <small class="opacity-8">Allows one additional exam attempt</small>
+                                            </div>
+                                            <div class="col-4 text-end">
+                                                <h5 class="text-white mb-0">₹@Model.ReExamFee</h5>
+                                            </div>
+                                        </div>
+                                        <hr class="horizontal light">
+                                        <div class="row text-white">
+                                            <div class="col-8">
+                                                <h6 class="mb-0">Total Amount</h6>
+                                            </div>
+                                            <div class="col-4 text-end">
+                                                <h5 class="text-white mb-0">₹@Model.ReExamFee</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms and Conditions -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="terms" required>
+                                    <label class="form-check-label" for="terms">
+                                        I agree to the <a href="#" class="text-primary">terms and conditions</a> for re-exam payment
+                                    </label>
+                                </div>
+                                <small class="text-muted">
+                                    • Re-exam payment is non-refundable<br>
+                                    • You will have access to retake the exam once payment is confirmed<br>
+                                    • Same exam pattern and syllabus will apply
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between">
+                                    <a href="/student/my-exams" class="btn btn-outline-secondary">
+                                        <i class="fas fa-arrow-left me-2"></i>Back to Exams
+                                    </a>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-credit-card me-2"></i>Pay ₹@Model.ReExamFee
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Auto-select first payment method
+            $('.payment-method-card input[type="radio"]:first').prop('checked', true).trigger('change');
+            
+            // Payment method selection styling
+            $('.payment-method-card input[type="radio"]').change(function() {
+                $('.payment-method-card .card').removeClass('border-primary');
+                if ($(this).is(':checked')) {
+                    $(this).siblings('label').find('.card').addClass('border-primary');
+                }
+            });
+            
+            // Form submission handler
+            $('form').on('submit', function(e) {
+                var selectedPayment = $('input[name="SelectedPaymentMethod"]:checked').val();
+                if (!selectedPayment) {
+                    e.preventDefault();
+                    alert('Please select a payment method');
+                    return false;
+                }
+                
+                // Show loading state
+                $(this).find('button[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Processing...');
+            });
+        });
+    </script>
+}
+
+<style>
+    .payment-method-card .form-check-input {
+        display: none;
+    }
+    
+    .payment-method-card .card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+    
+    .payment-method-card .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .payment-method-card input:checked + label .card {
+        border-color: #5e72e4 !important;
+        background: rgba(94, 114, 228, 0.1);
+    }
+</style>

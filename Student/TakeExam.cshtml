@@ -1,0 +1,83 @@
+@model EasyLearn.Models.Exam
+@{
+    ViewData["Title"] = "Take Exam - " + Model.Title;
+    var timeStatus = ViewBag.TimeStatus as string;
+    var isExamTimeActive = (bool)ViewBag.IsExamTimeActive;
+    var courseName = ViewBag.CourseName as string;
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h5 class="mb-0">@Model.Title</h5>
+                            <p class="text-sm mb-0">Course: @courseName</p>
+                        </div>
+                        <div class="ms-auto">
+                            <span class="badge bg-gradient-@(isExamTimeActive ? "success" : "warning") text-white">
+                                @(isExamTimeActive ? "Live Now" : "Scheduled")
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card border">
+                                <div class="card-body text-center">
+                                    <h6 class="text-primary mb-2">Exam Information</h6>
+                                    <p class="mb-1"><strong>Date:</strong> @Model.ScheduledStartTime.ToString("MMM dd, yyyy")</p>
+                                    <p class="mb-1"><strong>Time:</strong> @Model.ScheduledStartTime.ToString("hh:mm tt") - @Model.ScheduledEndTime.ToString("hh:mm tt")</p>
+                                    <p class="mb-1"><strong>Duration:</strong> 2 Hours</p>
+                                    <p class="mb-0"><strong>Total Marks:</strong> @Model.TotalMarks</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border">
+                                <div class="card-body text-center">
+                                    <h6 class="text-info mb-2">Exam Pattern</h6>
+                                    <p class="mb-1"><strong>Part A:</strong> @Model.PartAMarks marks (MCQs)</p>
+                                    <p class="mb-1"><strong>Part B:</strong> @Model.PartBMarks marks (Written)</p>
+                                    <p class="mb-1"><strong>Internal:</strong> @Model.InternalMarks marks</p>
+                                    <p class="mb-0"><strong>Passing:</strong> @Model.PassingPercentage%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Instructions:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>This exam consists of two parts: Part A (Multiple Choice) and Part B (Written)</li>
+                            <li>You must complete Part A before proceeding to Part B</li>
+                            <li>Internal marks will be assigned by your instructor</li>
+                            <li>Make sure you have a stable internet connection</li>
+                            <li>Once started, the exam timer cannot be paused</li>
+                        </ul>
+                    </div>
+
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <div class="alert alert-success">
+                                <i class="fas fa-shield-check me-2"></i>
+                                <strong>Status:</strong> Verification completed - Exam is available
+                            </div>
+                        </div>
+                        <form method="post" action="/student/start-exam-attempt">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="examId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-play me-2"></i>Start Exam
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,189 @@
+@model EasyLearn.Models.ExamAttempt
+@{
+    ViewData["Title"] = "Exam Result - " + Model.Exam.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">@Model.Exam.Title - Exam Result</h5>
+                            <p class="text-sm mb-0">@Model.Exam.Course.Title</p>
+                        </div>
+                        <div>
+                            @if (Model.IsPassed)
+                            {
+                                <span class="badge bg-gradient-success">PASSED</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-gradient-danger">FAILED</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Model.ResultPublished)
+                    {
+                        if (Model.IsPassed)
+                        {
+                            <div class="alert alert-success">
+                                <i class="fas fa-trophy me-2"></i>
+                                <strong>Congratulations!</strong> You have successfully passed the exam.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Better luck next time!</strong> You can retake the exam after payment.
+                            </div>
+                        }
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card border">
+                                    <div class="card-body text-center">
+                                        <h3 class="text-primary">@Model.Percentage.ToString("F1")%</h3>
+                                        <p class="mb-0">Overall Score</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border">
+                                    <div class="card-body text-center">
+                                        <h3 class="text-info">@Model.TotalScore/@Model.Exam.TotalMarks</h3>
+                                        <p class="mb-0">Total Marks</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card border-warning">
+                                    <div class="card-header bg-warning text-white">
+                                        <h6 class="mb-0">Part B (Written)</h6>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <h4>@Model.PartBScore/@Model.Exam.PartBMarks</h4>
+                                        <p class="mb-0">Written Questions</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-success">
+                                    <div class="card-header bg-success text-white">
+                                        <h6 class="mb-0">Internal Assessment</h6>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <h4>@Model.InternalScore/@Model.Exam.InternalMarks</h4>
+                                        <p class="mb-0">Internal Marks</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card border-info">
+                                    <div class="card-header bg-info text-white">
+                                        <h6 class="mb-0">Exam Details</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>Exam Date:</strong> @Model.Exam.ScheduledStartTime.ToString("dd MMM yyyy")</p>
+                                                <p><strong>Started At:</strong> @Model.StartedAt.ToString("dd MMM yyyy HH:mm")</p>
+                                                <p><strong>Completed At:</strong> @(Model.CompletedAt?.ToString("dd MMM yyyy HH:mm") ?? "In Progress")</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>Passing Score:</strong> @Model.Exam.PassingPercentage%</p>
+                                                <p><strong>Your Score:</strong> @Model.Percentage.ToString("F1")%</p>
+                                                <p><strong>Status:</strong> 
+                                                    @if (Model.IsPassed)
+                                                    {
+                                                        <span class="badge bg-success">Passed - Results Published</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-danger">Failed - Results Published</span>
+                                                    }
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <div class="mb-4">
+                                <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                                <h3 class="text-success">Exam Completed Successfully!</h3>
+                                <p class="text-muted mb-4">Thank you for completing your exam. Your answers have been submitted.</p>
+                            </div>
+                            
+                            @* MCQ scores are hidden from students for security reasons *@
+                            
+                            <div class="alert alert-info mx-auto" style="max-width: 600px;">
+                                <i class="fas fa-clock me-2"></i>
+                                <strong>Waiting for Complete Results!</strong><br>
+                                Your answers are being reviewed by the instructor. Final results will be published once evaluation is complete.
+                            </div>
+                            
+                            <div class="card border-0 bg-light mx-auto mt-4" style="max-width: 500px;">
+                                <div class="card-body">
+                                    <h6 class="text-primary mb-3">Exam Information</h6>
+                                    <div class="row text-start">
+                                        <div class="col-6">
+                                            <p class="mb-2"><strong>Exam:</strong> @Model.Exam.Title</p>
+                                            <p class="mb-2"><strong>Course:</strong> @Model.Exam.Course.Title</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <p class="mb-2"><strong>Date:</strong> @Model.Exam.ScheduledStartTime.ToString("dd MMM yyyy")</p>
+                                            <p class="mb-2"><strong>Submitted:</strong> @(Model.CompletedAt?.ToString("dd MMM yyyy HH:mm") ?? "In Progress")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="text-center mt-4">
+                        @if (Model.ResultPublished)
+                        {
+                            @if (Model.IsPassed && Model.ExamCertificate != null)
+                            {
+                                <a href="/student/download-exam-certificate/@Model.Id" class="btn btn-success btn-lg me-3">
+                                    <i class="fas fa-download me-2"></i>Download Certificate
+                                </a>
+                            }
+                            
+                            @if (!Model.IsPassed)
+                            {
+                                <a href="/student/re-exam-payment/@Model.Id" class="btn btn-warning btn-lg me-3">
+                                    <i class="fas fa-redo me-2"></i>Pay for Re-exam
+                                </a>
+                            }
+                        }
+                        
+                        <a href="/student/exam-results" class="btn btn-info btn-lg me-3">
+                            <i class="fas fa-list me-2"></i>All Results
+                        </a>
+                        
+                        <a href="/student/my-exams" class="btn btn-primary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Back to My Exams
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

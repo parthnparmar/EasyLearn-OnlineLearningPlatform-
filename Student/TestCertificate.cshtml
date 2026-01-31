@@ -1,0 +1,82 @@
+@{
+    ViewData["Title"] = "Test Certificate Generation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Test Certificate Generation</h5>
+                    <p class="text-sm mb-0">This is a test page to verify certificate generation functionality</p>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Certificate System Status:</strong> The exam certificate system is now fully implemented with the following features:
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">✅ Implemented Features:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Exam certificate generation</li>
+                                <li><i class="fas fa-check text-success me-2"></i>PDF certificate with professional design</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Certificate download functionality</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Exam results view with certificate access</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Comprehensive exam results dashboard</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Certificate validation and security</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Automatic certificate generation on exam pass</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Error handling and file regeneration</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-info">📋 Available Views:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-eye text-info me-2"></i><a href="/student/exam-results">Exam Results Dashboard</a></li>
+                                <li><i class="fas fa-eye text-info me-2"></i><a href="/student/my-exams">My Exams</a></li>
+                                <li><i class="fas fa-eye text-info me-2"></i><a href="/student/approved-exams">Approved Exams</a></li>
+                                <li><i class="fas fa-eye text-info me-2"></i><a href="/student/dashboard">Student Dashboard</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-success mt-4">
+                        <h6><i class="fas fa-trophy me-2"></i>Certificate Download Process:</h6>
+                        <ol>
+                            <li>Student takes and passes an exam (≥75% score)</li>
+                            <li>Instructor assigns internal marks and publishes results</li>
+                            <li>System automatically generates exam certificate</li>
+                            <li>Student can download certificate from:
+                                <ul>
+                                    <li>Individual exam result page</li>
+                                    <li>Exam results dashboard</li>
+                                    <li>My exams page</li>
+                                </ul>
+                            </li>
+                            <li>Certificate includes:
+                                <ul>
+                                    <li>Student name and course title</li>
+                                    <li>Exam percentage and marks</li>
+                                    <li>Certificate number and validity</li>
+                                    <li>Instructor and platform signatures</li>
+                                    <li>Official seal and security features</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="/student/dashboard" class="btn btn-primary me-3">
+                            <i class="fas fa-home me-2"></i>Go to Dashboard
+                        </a>
+                        <a href="/student/exam-results" class="btn btn-success">
+                            <i class="fas fa-trophy me-2"></i>View Exam Results
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

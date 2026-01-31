@@ -1,0 +1,284 @@
+@model EasyLearn.Models.ViewModels.PaymentViewModel
+@{
+    ViewData["Title"] = "Payment - " + Model.Course.Title;
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Course Summary Card -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Course Purchase</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <img src="@(Model.Course.ThumbnailUrl ?? "/images/course-placeholder.jpg")" 
+                                 alt="@Model.Course.Title" class="img-fluid rounded">
+                        </div>
+                        <div class="col-md-9">
+                            <h5 class="fw-bold">@Model.Course.Title</h5>
+                            <p class="text-muted mb-2">by @Model.Course.Instructor.FirstName @Model.Course.Instructor.LastName</p>
+                            <p class="mb-2">@Model.Course.Description</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-secondary">@Model.Course.Category.Name</span>
+                                <h4 class="text-success mb-0">₹@Model.Amount.ToString("N0")</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Methods Card -->
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Choose Payment Method</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CompletePayment" method="post" id="paymentForm">
+                        <input type="hidden" asp-for="CourseId" />
+                        <input type="hidden" asp-for="StudentName" />
+                        <input type="hidden" asp-for="StudentEmail" />
+                        <input type="hidden" asp-for="StudentPhone" />
+                        <input type="hidden" asp-for="Amount" />
+                        <input type="hidden" id="qrTransactionId" name="QRTransactionId" value="" />
+
+                        <div class="row">
+                            @foreach (var method in Model.AvailablePaymentMethods)
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="payment-method-card" data-method="@method.Type">
+                                        <input type="radio" name="SelectedPaymentMethod" value="@method.Type" 
+                                               id="payment_@method.Type" class="payment-radio d-none" />
+                                        <label for="payment_@method.Type" class="payment-label w-100">
+                                            <div class="card h-100 payment-option">
+                                                <div class="card-body text-center">
+                                                    <i class="@method.Icon fa-3x mb-3 text-primary"></i>
+                                                    <h6 class="card-title">@method.DisplayName</h6>
+                                                    @if (method.Type == EasyLearn.Models.PaymentMethodType.UPI)
+                                                    {
+                                                        <small class="text-muted">Pay using any UPI app</small>
+                                                    }
+                                                    else if (method.Type == EasyLearn.Models.PaymentMethodType.GooglePay)
+                                                    {
+                                                        <small class="text-muted">Quick & secure payments</small>
+                                                    }
+                                                    else if (method.Type == EasyLearn.Models.PaymentMethodType.PhonePe)
+                                                    {
+                                                        <small class="text-muted">Instant payments</small>
+                                                    }
+                                                    else if (method.Type == EasyLearn.Models.PaymentMethodType.Paytm)
+                                                    {
+                                                        <small class="text-muted">Digital wallet payments</small>
+                                                    }
+                                                    else if (method.Type == EasyLearn.Models.PaymentMethodType.QRCode)
+                                                    {
+                                                        <small class="text-muted">Scan QR code to pay</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        <small class="text-muted">Secure card payments</small>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- QR Code Display Section -->
+                        <div id="qrCodeSection" class="row mt-4" style="display: none;">
+                            <div class="col-12">
+                                <div class="card border-primary">
+                                    <div class="card-header bg-primary text-white text-center">
+                                        <h6 class="mb-0"><i class="fas fa-qrcode me-2"></i>Scan QR Code to Pay</h6>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div id="qrCodeContainer">
+                                                    <img id="qrCodeImage" src="" alt="QR Code" class="img-fluid" style="max-width: 250px; border: 2px solid #007bff; border-radius: 10px;" />
+                                                </div>
+                                                <p class="mt-3 text-muted">Scan this QR code with any UPI app</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="payment-instructions">
+                                                    <h6 class="text-primary">How to Pay:</h6>
+                                                    <ol class="text-start">
+                                                        <li>Open any UPI app (Google Pay, PhonePe, Paytm, etc.)</li>
+                                                        <li>Tap on "Scan QR Code" or camera icon</li>
+                                                        <li>Point your camera at the QR code</li>
+                                                        <li>Enter the amount: ₹@Model.Amount</li>
+                                                        <li>Complete the payment</li>
+                                                    </ol>
+                                                    <div class="alert alert-info mt-3">
+                                                        <small><i class="fas fa-info-circle me-1"></i>Payment will be verified automatically</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Summary -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Payment Summary</h6>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Course Price:</span>
+                                            <span>₹@Model.Amount.ToString("N0")</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Processing Fee:</span>
+                                            <span class="text-success">FREE</span>
+                                        </div>
+                                        <hr>
+                                        <div class="d-flex justify-content-between fw-bold">
+                                            <span>Total Amount:</span>
+                                            <span class="text-success">₹@Model.Amount.ToString("N0")</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between">
+                                    <a href="@Url.Action("CourseDetails", new { id = Model.CourseId })" 
+                                       class="btn btn-outline-secondary">
+                                        <i class="fas fa-arrow-left me-1"></i>Back to Course
+                                    </a>
+                                    <button type="submit" class="btn btn-success btn-lg" id="payButton" disabled>
+                                        <i class="fas fa-lock me-1"></i>Pay ₹@Model.Amount.ToString("N0")
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-shield-alt me-2"></i>
+                <strong>Secure Payment:</strong> Your payment information is encrypted and secure. 
+                We use industry-standard security measures to protect your data.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.payment-method-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.payment-option {
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.payment-option:hover {
+    border-color: #007bff;
+    box-shadow: 0 4px 8px rgba(0,123,255,0.1);
+}
+
+.payment-radio:checked + .payment-label .payment-option {
+    border-color: #28a745;
+    background-color: #f8fff9;
+    box-shadow: 0 4px 12px rgba(40,167,69,0.2);
+}
+
+.payment-radio:checked + .payment-label .payment-option .text-primary {
+    color: #28a745 !important;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.payment-label {
+    margin-bottom: 0;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentRadios = document.querySelectorAll('.payment-radio');
+    const payButton = document.getElementById('payButton');
+    const qrCodeSection = document.getElementById('qrCodeSection');
+    const qrCodeImage = document.getElementById('qrCodeImage');
+    
+    paymentRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            payButton.disabled = false;
+            
+            // Update button text with selected method
+            const selectedMethod = document.querySelector('.payment-radio:checked');
+            if (selectedMethod) {
+                const methodLabel = document.querySelector(`label[for="${selectedMethod.id}"] .card-title`).textContent;
+                payButton.innerHTML = `<i class="fas fa-lock me-1"></i>Pay ₹@Model.Amount.ToString("N0") via ${methodLabel}`;
+                
+                // Show/hide QR code section
+                if (selectedMethod.value === '@((int)EasyLearn.Models.PaymentMethodType.QRCode)') {
+                    showQRCode();
+                } else {
+                    hideQRCode();
+                }
+            }
+        });
+    });
+    
+    function showQRCode() {
+        // Generate QR code via API
+        fetch(`/student/generate-qr/@Model.CourseId`)
+            .then(response => response.json())
+            .then(data => {
+                qrCodeImage.src = data.qrCodeUrl;
+                qrCodeSection.style.display = 'block';
+                
+                // Store transaction ID for verification
+                document.getElementById('qrTransactionId').value = data.transactionId;
+                
+                // Scroll to QR code section
+                qrCodeSection.scrollIntoView({ behavior: 'smooth' });
+            })
+            .catch(error => {
+                console.error('Error generating QR code:', error);
+                alert('Failed to generate QR code. Please try another payment method.');
+            });
+    }
+    
+    function hideQRCode() {
+        qrCodeSection.style.display = 'none';
+    }
+    
+    // Form submission with loading state
+    document.getElementById('paymentForm').addEventListener('submit', function(e) {
+        const selectedMethod = document.querySelector('.payment-radio:checked');
+        
+        if (!selectedMethod) {
+            e.preventDefault();
+            alert('Please select a payment method.');
+            return;
+        }
+        
+        payButton.disabled = true;
+        payButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Processing Payment...';
+        
+        // For QR code payments, show processing message
+        if (selectedMethod.value === '@((int)EasyLearn.Models.PaymentMethodType.QRCode)') {
+            payButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Verifying QR Payment...';
+        }
+    });
+});
+</script>

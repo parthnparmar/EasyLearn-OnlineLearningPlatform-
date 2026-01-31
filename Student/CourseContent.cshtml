@@ -1,0 +1,139 @@
+@model EasyLearn.Models.ViewModels.CourseContentViewModel
+@{
+    ViewData["Title"] = $"{Model.Course.Title} - Course Content";
+}
+
+<div class="container mt-4">
+    <!-- Success Message -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2>@Model.Course.Title</h2>
+                    <p class="text-muted mb-0">by @Model.Course.Instructor.FirstName @Model.Course.Instructor.LastName</p>
+                </div>
+                <div class="text-end">
+                    <div class="progress mb-2" style="width: 200px; height: 8px;">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             style="width: @Model.ProgressPercentage%"
+                             aria-valuenow="@Model.ProgressPercentage" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+                    <small class="text-muted">@Model.CompletedLessons of @Model.Lessons.Count lessons completed (@Model.ProgressPercentage.ToString("F1")%)</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-play-circle"></i> Video Lessons - Start Learning Now!</h5>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.Lessons.Any())
+                    {
+                        <div class="list-group list-group-flush">
+                            @for (int i = 0; i < Model.Lessons.Count; i++)
+                            {
+                                var lesson = Model.Lessons[i];
+                                var isCompleted = Model.LessonCompletionStatus.ContainsKey(lesson.Id) && Model.LessonCompletionStatus[lesson.Id];
+                                
+                                <div class="list-group-item @(i == 0 ? "bg-light" : "")">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center">
+                                                @if (isCompleted)
+                                                {
+                                                    <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fas fa-play-circle text-primary me-3 fa-lg"></i>
+                                                }
+                                                <div>
+                                                    <h6 class="mb-1">@(i + 1). @lesson.Title</h6>
+                                                    <p class="mb-1 text-muted">@lesson.Description</p>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-clock"></i> Duration: @lesson.Duration.ToString(@"mm\:ss")
+                                                        @if (i == 0 && !isCompleted)
+                                                        {
+                                                            <span class="badge bg-primary ms-2">Start Here</span>
+                                                        }
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            @if (!string.IsNullOrEmpty(lesson.MaterialUrl))
+                                            {
+                                                <a href="@Url.Action("DownloadMaterial", new { lessonId = lesson.Id })" 
+                                                   class="btn btn-outline-secondary btn-sm" target="_blank">
+                                                    <i class="fas fa-download"></i> Materials
+                                                </a>
+                                            }
+                                            @if (!string.IsNullOrEmpty(lesson.VideoUrl))
+                                            {
+                                                <a href="@Url.Action("WatchLesson", new { lessonId = lesson.Id })" 
+                                                   class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-play"></i> @(isCompleted ? "Watch Again" : "Watch Video")
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">
+                                                    <i class="fas fa-file-text"></i> Content Only
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-video fa-3x text-muted mb-3"></i>
+                            <h5>No lessons available</h5>
+                            <p class="text-muted">This course doesn't have any lessons yet.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between">
+                <a href="@Url.Action("CourseDetails", new { id = Model.Course.Id })" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Course Details
+                </a>
+                <div>
+                    <a href="@Url.Action("MyCourses")" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-graduation-cap"></i> My Courses
+                    </a>
+                    @if (Model.Lessons.Any(l => !string.IsNullOrEmpty(l.VideoUrl)))
+                    {
+                        var firstVideoLesson = Model.Lessons.First(l => !string.IsNullOrEmpty(l.VideoUrl));
+                        <a href="@Url.Action("WatchLesson", new { lessonId = firstVideoLesson.Id })" class="btn btn-success">
+                            <i class="fas fa-play"></i> Start Learning
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

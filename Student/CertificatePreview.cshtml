@@ -1,0 +1,76 @@
+@{
+    ViewData["Title"] = "Certificate Preview";
+    Layout = "_Layout";
+}
+
+<link rel="stylesheet" href="~/css/certificate-receipt.css" />
+
+<div class="certificate-page">
+    <div class="certificate-wrapper">
+        <div class="certificate-border">
+            <div class="decorative-corner corner-tl"></div>
+            <div class="decorative-corner corner-tr"></div>
+            <div class="decorative-corner corner-bl"></div>
+            <div class="decorative-corner corner-br"></div>
+            
+            <div class="certificate-inner-border">
+                <!-- Header -->
+                <div class="cert-header">
+                    <div class="cert-logo">🎓</div>
+                    <h1 class="cert-title">CERTIFICATE</h1>
+                    <p class="cert-subtitle">OF COMPLETION</p>
+                </div>
+
+                <!-- Body -->
+                <div class="cert-body">
+                    <p class="cert-text">This is to certify that</p>
+                    
+                    <div class="student-name">John Doe</div>
+                    
+                    <p class="cert-text">has successfully completed the course</p>
+                    
+                    <div class="course-title">"Advanced Web Development with ASP.NET Core"</div>
+                    
+                    <p class="cert-date">Completed on December 28, 2024</p>
+                </div>
+
+                <!-- Footer -->
+                <div class="cert-footer">
+                    <div class="signature-block">
+                        <div class="signature-line"></div>
+                        <div class="signature-name">Jane Smith</div>
+                        <div class="signature-title">Course Instructor</div>
+                    </div>
+                    
+                    <div class="signature-block">
+                        <div class="cert-seal">🏆</div>
+                        <div style="margin-top: 10px;">
+                            <div class="signature-name">EasyLearn</div>
+                            <div class="signature-title">Official Seal</div>
+                        </div>
+                    </div>
+                    
+                    <div class="signature-block">
+                        <div class="signature-line"></div>
+                        <div class="signature-name">Director</div>
+                        <div class="signature-title">EasyLearn Platform</div>
+                    </div>
+                </div>
+                
+                <div class="cert-id">Certificate ID: EL-CERT-20241228-ABC123</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-4">
+        <button class="btn btn-primary me-2" onclick="window.print()">Print Certificate</button>
+        <button class="btn btn-success me-2" onclick="downloadCertificate()">Download PDF</button>
+        <a href="/student/dashboard" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+
+<script>
+function downloadCertificate() {
+    alert('Certificate downloaded successfully! Check your Downloads folder.');
+}
+</script>

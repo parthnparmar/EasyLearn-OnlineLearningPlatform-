@@ -1,0 +1,316 @@
+@model EasyLearn.Models.PreExamVerificationViewModel
+@{
+    ViewData["Title"] = "Pre-Exam Verification";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h4 class="mb-0 text-primary">
+                                <i class="fas fa-shield-alt me-2"></i>Pre-Exam Verification
+                            </h4>
+                            <p class="text-sm mb-0">@Model.Exam?.Title - @Model.Exam?.Course?.Title</p>
+                        </div>
+                        <div class="ms-auto">
+                            <span class="badge bg-gradient-info text-white">
+                                <i class="fas fa-clock me-1"></i>Required
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Important:</strong> Please verify your details before starting the exam. This information will be used for exam records and certificate generation.
+                    </div>
+
+                    <form action="/student/pre-exam-verification" method="post" id="verificationForm" novalidate>
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="ExamId" />
+                        <input type="hidden" asp-for="CaptchaCorrectAnswer" />
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="FullName" class="form-label">
+                                        <i class="fas fa-user me-1"></i>Full Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input asp-for="FullName" class="form-control" placeholder="Enter your full name" />
+                                    <span asp-validation-for="FullName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="EnrollmentNumber" class="form-label">
+                                        <i class="fas fa-id-card me-1"></i>Enrollment Number <span class="text-danger">*</span>
+                                    </label>
+                                    <input asp-for="EnrollmentNumber" class="form-control" placeholder="Enter your enrollment number" />
+                                    <span asp-validation-for="EnrollmentNumber" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Email" class="form-label">
+                                        <i class="fas fa-envelope me-1"></i>Email Address <span class="text-danger">*</span>
+                                    </label>
+                                    <input asp-for="Email" class="form-control" placeholder="Enter your email address" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="PhoneNumber" class="form-label">
+                                        <i class="fas fa-phone me-1"></i>Phone Number <span class="text-danger">*</span>
+                                    </label>
+                                    <input asp-for="PhoneNumber" class="form-control" placeholder="Enter your phone number" />
+                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CAPTCHA Section -->
+                        <div class="card border-primary mb-4">
+                            <div class="card-header bg-gradient-primary text-white">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-robot me-2"></i>Security Verification (CAPTCHA)
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <div class="captcha-question p-3 bg-light rounded text-center">
+                                            <h5 class="mb-0 text-primary">@Model.CaptchaQuestion</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-0">
+                                            <label asp-for="CaptchaAnswer" class="form-label">
+                                                Your Answer <span class="text-danger">*</span>
+                                            </label>
+                                            <input asp-for="CaptchaAnswer" class="form-control form-control-lg text-center" 
+                                                   placeholder="Enter answer" autocomplete="off" />
+                                            <span asp-validation-for="CaptchaAnswer" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="refreshCaptcha()">
+                                        <i class="fas fa-refresh me-1"></i>New Question
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms and Conditions -->
+                        <div class="form-check mb-4">
+                            <input asp-for="AgreeToTerms" class="form-check-input" type="checkbox" />
+                            <label asp-for="AgreeToTerms" class="form-check-label">
+                                I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">terms and conditions</a> 
+                                and confirm that all information provided is accurate. <span class="text-danger">*</span>
+                            </label>
+                            <span asp-validation-for="AgreeToTerms" class="text-danger d-block"></span>
+                        </div>
+
+                        <div class="text-center">
+                            <a href="/student/my-exams" class="btn btn-outline-secondary me-3">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Exams
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                                <i class="fas fa-check-circle me-2"></i>Verify & Proceed to Exam
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms and Conditions Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="termsModalLabel">Exam Terms and Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Identity Verification</h6>
+                <p>By proceeding, you confirm that you are the registered student and will be taking the exam personally.</p>
+                
+                <h6>2. Academic Integrity</h6>
+                <p>You agree to maintain academic integrity and not engage in any form of cheating, plagiarism, or unauthorized assistance.</p>
+                
+                <h6>3. Technical Requirements</h6>
+                <p>You confirm that you have a stable internet connection and appropriate device to complete the exam.</p>
+                
+                <h6>4. Exam Rules</h6>
+                <ul>
+                    <li>Once started, the exam timer cannot be paused</li>
+                    <li>You must complete both Part A and Part B within the allocated time</li>
+                    <li>No external help or resources are allowed unless specified</li>
+                    <li>Any violation may result in exam disqualification</li>
+                </ul>
+                
+                <h6>5. Data Usage</h6>
+                <p>The information provided will be used for exam administration, result processing, and certificate generation.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function refreshCaptcha() {
+            // Refresh the page to get a new CAPTCHA
+            window.location.reload();
+        }
+
+        // Form validation and submission
+        document.getElementById('verificationForm').addEventListener('submit', function(e) {
+            console.log('Form submission started');
+            const submitButton = document.getElementById('submitBtn');
+            const requiredFields = ['FullName', 'EnrollmentNumber', 'Email', 'PhoneNumber', 'CaptchaAnswer'];
+            let isValid = true;
+
+            // Validate required fields
+            requiredFields.forEach(field => {
+                const input = document.querySelector(`[name="${field}"]`);
+                if (!input || !input.value.trim()) {
+                    isValid = false;
+                    if (input) {
+                        input.classList.add('is-invalid');
+                    }
+                    console.log(`Field ${field} is invalid`);
+                } else {
+                    if (input) {
+                        input.classList.remove('is-invalid');
+                    }
+                }
+            });
+
+            // Validate checkbox
+            const agreeCheckbox = document.querySelector('[name="AgreeToTerms"]');
+            if (!agreeCheckbox || !agreeCheckbox.checked) {
+                isValid = false;
+                if (agreeCheckbox) {
+                    agreeCheckbox.classList.add('is-invalid');
+                }
+                console.log('Terms checkbox not checked');
+            } else {
+                if (agreeCheckbox) {
+                    agreeCheckbox.classList.remove('is-invalid');
+                }
+            }
+
+            // Validate CAPTCHA answer is a number
+            const captchaInput = document.querySelector('[name="CaptchaAnswer"]');
+            if (captchaInput && captchaInput.value.trim()) {
+                const captchaValue = parseInt(captchaInput.value.trim());
+                if (isNaN(captchaValue)) {
+                    isValid = false;
+                    captchaInput.classList.add('is-invalid');
+                    console.log('CAPTCHA answer is not a number');
+                }
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please fill in all required fields correctly and agree to the terms and conditions.');
+                console.log('Form validation failed');
+                return false;
+            }
+
+            // Show loading state if validation passes
+            if (submitButton) {
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verifying...';
+                submitButton.disabled = true;
+            }
+
+            // Allow form to submit normally
+            console.log('Form validation passed, submitting...');
+            return true;
+        });
+
+        // Auto-focus on CAPTCHA answer field
+        document.addEventListener('DOMContentLoaded', function() {
+            const captchaInput = document.querySelector('[name="CaptchaAnswer"]');
+            if (captchaInput) {
+                captchaInput.focus();
+            }
+
+            // Remove invalid class on input
+            document.querySelectorAll('.form-control, .form-check-input').forEach(input => {
+                input.addEventListener('input', function() {
+                    this.classList.remove('is-invalid');
+                });
+            });
+        });
+
+        // Handle form errors and reset button state
+        window.addEventListener('load', function() {
+            const submitButton = document.getElementById('submitBtn');
+            if (submitButton) {
+                submitButton.innerHTML = '<i class="fas fa-check-circle me-2"></i>Verify & Proceed to Exam';
+                submitButton.disabled = false;
+            }
+            
+            // Add fallback for form submission if JavaScript fails
+            const form = document.getElementById('verificationForm');
+            if (form) {
+                // Add a backup submit handler
+                form.addEventListener('submit', function(e) {
+                    const submitBtn = document.getElementById('submitBtn');
+                    if (submitBtn && !submitBtn.disabled) {
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+                        submitBtn.disabled = true;
+                    }
+                }, true);
+            }
+        });
+    </script>
+}
+
+<style>
+    .captcha-question {
+        border: 2px dashed #007bff;
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+    }
+    
+    .form-control.is-invalid {
+        border-color: #dc3545;
+    }
+    
+    .form-check-input.is-invalid {
+        border-color: #dc3545;
+    }
+    
+    .card-header.bg-gradient-primary {
+        background: linear-gradient(45deg, #007bff, #0056b3) !important;
+    }
+    
+    .alert-info {
+        border-left: 4px solid #17a2b8;
+    }
+    
+    #submitBtn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+    
+    .fa-spin {
+        animation: fa-spin 1s infinite linear;
+    }
+</style>

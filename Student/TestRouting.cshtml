@@ -1,0 +1,32 @@
+@{
+    ViewData["Title"] = "Test Routing";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h2>Student Controller Test</h2>
+            <div class="alert alert-success">
+                <h4>@ViewBag.Message</h4>
+                <p><strong>User ID:</strong> @ViewBag.UserId</p>
+                <p><strong>Is Authenticated:</strong> @ViewBag.IsAuthenticated</p>
+                <p><strong>Roles:</strong> @ViewBag.Roles</p>
+            </div>
+            
+            <div class="mt-4">
+                <h4>Test Links:</h4>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <a href="@Url.Action("BrowseCourses", "Student")" class="btn btn-primary">Test Browse Courses</a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="@Url.Action("MyCourses", "Student")" class="btn btn-secondary">Test My Courses</a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="@Url.Action("Index", "Student")" class="btn btn-info">Test Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
